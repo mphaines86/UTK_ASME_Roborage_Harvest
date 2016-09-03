@@ -21,7 +21,6 @@ public class COBSWriter {
 
     public void write(ByteBuffer message) throws IOException{
         stuffBytes(message, stuffedOutput);
-        System.out.println("yep!");
         serialComm.output.write(rawStuff, 0, stuffedOutput.remaining()); //TODO: Fix Encapsulation
         //out.write(rawStuff, 0, stuffedOutput.remaining());
     }

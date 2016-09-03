@@ -25,7 +25,7 @@ public class GraphicsInterface extends JFrame {
 
     private serialComm comm;
     private MessageWriter messageWriter;
-    //final MessageReader messageReader = new MessageReader();
+    //final io.MessageReader messageReader = new io.MessageReader();
     // final xboxControllerTest connectController = new xboxControllerTest();
     private JComboBox commPorts, controllerPorts;
     private JTextArea console;
@@ -81,7 +81,7 @@ public class GraphicsInterface extends JFrame {
         GraphicsInterfacePane.setLayout(null);
 
         comm.searchForPorts();
-        //redirectSystemStreams();
+        redirectSystemStreams();
 
         Thread writerThread = new Thread(messageWriter);
         writerThread.start();
@@ -273,7 +273,7 @@ public class GraphicsInterface extends JFrame {
                     }
                 }
                 else {
-                    writeMessage(new PingMessage(1));
+                    //messageWriter.writeMessage(new PingMessage(2));
                     //System.out.println("Java Ping");
                     /*if (messageReader.messageReady()) {
                         byte[] data = messageReader.getMessage();

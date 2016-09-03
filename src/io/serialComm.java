@@ -80,7 +80,6 @@ public class serialComm implements SerialPortEventListener {
     public void portConnect(){
         //connect to port
         try{
-            portname = "/dev/ttyACM0";
             serialPort = (SerialPort)portId.open(this.getClass().getName(),TIME_OUT);
             //down cast the comm port to serial port
             //give the name of the application

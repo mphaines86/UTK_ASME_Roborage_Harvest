@@ -57,8 +57,7 @@ public class MessageWriter implements Runnable{
 
         data = msg.getBytes();
         writeData = true;
-
-
+        //System.out.println("Gotta message!!!");
     }
 
     public void setClose(Boolean close){

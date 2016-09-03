@@ -1,11 +1,11 @@
+package io;
+
 import java.io.IOException;
 import java.io.InputStreamReader;
 
 /**
  * Created by Michael Haines and Tanner Hobson on 2/10/2015.
  */
-
-
 
 public class MessageReader {
 
