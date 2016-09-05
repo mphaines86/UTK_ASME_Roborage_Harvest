@@ -50,6 +50,7 @@ public class serialComm implements SerialPortEventListener {
             }
 
         }
+        portList.add("/dev/ttyACM0");
     }
     public void initialize(){
         CommPortIdentifier ports = null;      //to browse through each port identified
