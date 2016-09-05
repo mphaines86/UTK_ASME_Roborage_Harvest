@@ -5,18 +5,19 @@
  */
 
 //import com.sun.prism.*;
+import audio.AudioFieldState;
 import io.serialComm;
 import io.MessageWriter;
+import javafx.embed.swing.JFXPanel;
 import messaging.*;
-//import net.java.games.input.Controller;
 
 import javax.swing.*;
+import javax.swing.Timer;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
-import java.sql.Time;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.*;
@@ -30,8 +31,6 @@ public class GraphicsInterface {
 
     private serialComm comm;
     private MessageWriter messageWriter;
-    //final io.MessageReader messageReader = new io.MessageReader();
-    // final xboxControllerTest connectController = new xboxControllerTest();
     private JComboBox comboCommPorts;
     private JTextArea console;
     private JCheckBox redTeamCheckBox, blueTeamCheckBox, greenTeamCheckBox, yellowTeamCheckBox;
@@ -39,17 +38,10 @@ public class GraphicsInterface {
     private JLabel gameTime, redState, redButton, redPoints, blueState, blueButton, bluePoints, greenState, greenButton,
             greenPoints, yellowState, yellowButton, yellowPoints, redDisplayPoints, blueDisplayPoints,
             greenDisplayPoints, yellowDisplayPoints, timeDisplay;
-    private String[] portList = {};
     private boolean isConnected = false;
-    private boolean canceldashboard = false;
+    private boolean matchStarted = false;
     private int teamsActive = 0;
     //SerialWorker initiateController;
-    //inputControl xboxController;
-    //Controller[] allControllers;
-    //Controller control;
-    private List<String> allTheControllers = new ArrayList<String>();
-    int[] controllerLocation = new int[10];
-    private boolean abuse = false;
 
     private final ScheduledExecutorService scheduler =
             Executors.newScheduledThreadPool(1);
@@ -59,7 +51,21 @@ public class GraphicsInterface {
         messageWriter = new MessageWriter(comm.getOutput());
         createGraphicInterface();
         updateDashboard();
-        canceldashboard = true;
+        matchStarted = false;
+
+        final CountDownLatch latch = new CountDownLatch(1);
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                new JFXPanel(); // initializes JavaFX environment
+                latch.countDown();
+            }
+        });
+        try {
+            latch.await();
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
 
     }
 
@@ -129,18 +135,16 @@ public class GraphicsInterface {
 
                             activateButton.setText("Disconnect");
                             messageWriter.writeMessage(new PingMessage(1));
-                            isConnected = true;
-                            canceldashboard = false;
+
                             //updateDashboard();
 
                         }
                         else if (isConnected) {
-                            canceldashboard = true;
                             messageWriter.writeMessage(new PingMessage(0));
                             comm.close();
                             activateButton.setText("Initialize");
                             //scheduler.shutdown();
-                            isConnected = false;
+
 
                         }
                     }
@@ -337,6 +341,15 @@ public class GraphicsInterface {
                     public void actionPerformed(ActionEvent e) {
                         System.out.println("Match is starting!");
 
+                        AudioFieldState fieldSound = new AudioFieldState();
+                        fieldSound.matchCountdown();
+
+                        System.out.println("CoolStory");
+
+                        //Timer timer = new Timer(50, this);
+                        //timer.setInitialDelay(1400);
+                        //timer.start();
+
                         messageWriter.writeMessage(new StartMessage((byte)2, (byte)1));
                     }
                 }
@@ -500,43 +513,6 @@ public class GraphicsInterface {
         c.gridy = 3;
         scoreFrame.add(bottomPanel, c);
 
-        /*redPanel = new JPanel();
-        redPanel.setBackground(Color.RED);
-        bottomPanel.add(redPanel);
-
-        redDisplayPoints = new JLabel("<html>Red Team Points: <br> 0</html>");
-        redDisplayPoints.setFont(new Font("Monospace", Font.BOLD, 24));
-        redDisplayPoints.setForeground(Color.BLACK);
-        redPanel.add(redDisplayPoints);
-
-        bluePanel = new JPanel();
-        bluePanel.setBackground(Color.BLUE);
-        bottomPanel.add(bluePanel);
-
-        blueDisplayPoints = new JLabel("<html>Blue Team Points: <br> 0</html>");
-        blueDisplayPoints.setFont(new Font("Monospace", Font.BOLD, 24));
-        blueDisplayPoints.setForeground(Color.BLACK);
-        bluePanel.add(blueDisplayPoints);
-
-        greenPanel = new JPanel();
-        greenPanel.setBackground(Color.GREEN);
-        bottomPanel.add(greenPanel);
-
-        greenDisplayPoints = new JLabel("<html>Green Team Points: <br> 0</html>");
-        greenDisplayPoints.setFont(new Font("Monospace", Font.BOLD, 24));
-        greenDisplayPoints.setForeground(Color.BLACK);
-        greenPanel.add(greenDisplayPoints);
-
-        yellowPanel = new JPanel();
-        yellowPanel.setBackground(Color.YELLOW);
-        bottomPanel.add(yellowPanel);
-
-        yellowDisplayPoints = new JLabel("<html>Yellow Team Points: <br> 0</html>");
-        yellowDisplayPoints.setFont(new Font("Monospace", Font.BOLD, 24));
-        yellowDisplayPoints.setForeground(Color.BLACK);
-        yellowPanel.add(yellowDisplayPoints);*/
-
-        scoreFrame.setVisible(true);
     }
 
     private void updateTextArea(final String text) {
@@ -554,65 +530,26 @@ public class GraphicsInterface {
         final Runnable dashboardUpdate = new Runnable() {
             @Override
             public void run() {
-                if(canceldashboard) {
+                if(!matchStarted) {
                     try {
                         //System.out.println("sleeping");
-                        Thread.sleep(1000);
+                        Thread.sleep(100);
                     } catch (InterruptedException e) {
                         Thread.currentThread().interrupt();
                     }
                 }
                 else {
-                    //messageWriter.writeMessage(new PingMessage(2));
-                    //System.out.println("Java Ping");
-                    /*if (messageReader.messageReady()) {
-                        byte[] data = messageReader.getMessage();
-                        IMessage msg = MessageParser.parse(data);
 
-                        if (msg instanceof BatteryMessage) {
-                            voltage = ((BatteryMessage) msg).getVoltage();
-                            batteryVoltage.setText(String.format("Battery Voltage: %s", voltage +'v'));
-                        }
-                        if (msg instanceof LimitSwitchMessage){
-                            if(((LimitSwitchMessage)msg).getLimitSwitchId() == 0  ){
-                                limitSwitchZero.setText((String.format("Top Limit Switch on: %s",
-                                        ((LimitSwitchMessage)msg).getIsPressed())));
-                            }
-                            else if(((LimitSwitchMessage)msg).getLimitSwitchId() == 1  ){
-                                limitSwitchOne.setText((String.format("Top Limit Switch on: %s",
-                                        ((LimitSwitchMessage) msg).getIsPressed())));
-                            }
-                        }
 
-                        if (msg instanceof EncoderMessage){
-
-                            byte MSB = ((EncoderMessage)msg).getMostSignificantBit();
-                            byte LSB = ((EncoderMessage)msg).getLeastSignificantBit();
-                            int combined = (MSB << 8 ) | (LSB & 0xff);
-
-                            if(((EncoderMessage)msg).getEncoderMessageId() == 0){
-                                encoderLeftFront.setText((String.format("Front Left RPM: %s", combined)));
-                            }
-                            else if(((EncoderMessage)msg).getEncoderMessageId() == 1){
-                                encoderLeftRear.setText((String.format("Front Left RPM: %s", combined)));
-                            }
-                            else if(((EncoderMessage)msg).getEncoderMessageId() == 2){
-                                encoderRightFront.setText((String.format("Front Left RPM: %s", combined)));
-                            }
-                            else if(((EncoderMessage)msg).getEncoderMessageId() == 3){
-                                encoderRightRear.setText((String.format("Front Left RPM: %s", combined)));
-                            }
-                        }
-                    }*/
                 }
             }
 
         };
 
         final ScheduledFuture<?> dashboardUpdater =
-                scheduler.scheduleAtFixedRate(dashboardUpdate, 200 , 200, TimeUnit.MILLISECONDS);
+                scheduler.scheduleAtFixedRate(dashboardUpdate, 100 , 100, TimeUnit.MILLISECONDS);
 
-        /*if(canceldashboard) {
+        /*if(matchStarted) {
             scheduler.schedule(new Runnable() {
                 @Override
                 public void run() {
@@ -642,28 +579,11 @@ public class GraphicsInterface {
         };
 
         System.setOut(new PrintStream(out, true));
-        System.setErr(new PrintStream(out, true));
+        //System.setErr(new PrintStream(out, true));
     }
+    
 
-    /*private void searchForControllers(){
-        xboxController = new inputControl();
-        allTheControllers.clear();
-        allControllers = xboxController.getName();
-        byte a = 0;
-        for (int i = 0; i < xboxController.getName().length; i++){
-            Controller[] temp = xboxController.getName();
-            if (!temp[i].toString().toLowerCase().contains("mouse") &&
-                    !temp[i].toString().toLowerCase().contains("keyboard") &&
-                    !temp[i].toString().toLowerCase().contains("receiver")) {
-                allTheControllers.add(temp[i].toString());
-                controllerLocation[a] = i;
-                a++;
-
-            }
-        }
-    }*/
-
-    private void writeMessage(IMessage msg){
+    /*private void writeMessage(IMessage msg){
         try {
             byte[] test = msg.getBytes();
             //for(int i = 0; i < msg.getBytes().length; i++){
@@ -676,7 +596,7 @@ public class GraphicsInterface {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
+    }*/
 
     public static void main(String[] args){
 
