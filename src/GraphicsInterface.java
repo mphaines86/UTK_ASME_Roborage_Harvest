@@ -18,8 +18,6 @@ import java.awt.event.*;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
-import java.util.*;
-import java.util.List;
 import java.util.concurrent.*;
 
 
@@ -38,13 +36,13 @@ public class GraphicsInterface {
     private JLabel gameTime, redState, redButton, redPoints, blueState, blueButton, bluePoints, greenState, greenButton,
             greenPoints, yellowState, yellowButton, yellowPoints, redDisplayPoints, blueDisplayPoints,
             greenDisplayPoints, yellowDisplayPoints, timeDisplay;
-    private boolean isConnected = false;
-    private boolean matchStarted = false;
-    private int teamsActive = 0;
-    //SerialWorker initiateController;
+    private boolean isConnected = false, matchStarted = false;
+    private int teamsActive = 0, matchtime = 0, matchlength = 120000;
+    private AudioFieldState fieldStartSound, fieldMatchSound, fieldEndSound;
 
     private final ScheduledExecutorService scheduler =
             Executors.newScheduledThreadPool(1);
+
 
     public GraphicsInterface(){
         comm = new serialComm();
@@ -339,18 +337,55 @@ public class GraphicsInterface {
                 new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        System.out.println("Match is starting!");
+                        if(!matchStarted) {
+                            System.out.println("Match is starting!");
+                            startMatchButton.setEnabled(false);
+                            activateButton.setEnabled(false);
+                            comboCommPorts.setEnabled(false);
+                            redTeamCheckBox.setEnabled(false);
+                            blueTeamCheckBox.setEnabled(false);
+                            greenTeamCheckBox.setEnabled(false);
+                            yellowTeamCheckBox.setEnabled(false);
 
-                        AudioFieldState fieldSound = new AudioFieldState();
-                        fieldSound.matchCountdown();
 
-                        System.out.println("CoolStory");
 
-                        //Timer timer = new Timer(50, this);
-                        //timer.setInitialDelay(1400);
-                        //timer.start();
+                            fieldStartSound = new AudioFieldState();
+                            fieldStartSound.matchCountdown();
 
-                        messageWriter.writeMessage(new StartMessage((byte)2, (byte)1));
+
+                            Timer timer = new Timer(50, new ActionListener() {
+                                @Override
+                                public void actionPerformed(ActionEvent e) {
+                                    matchtime = 0;
+                                    messageWriter.writeMessage(new StartMessage((byte) 2, (byte) 1));
+                                    matchStarted = true;
+                                    fieldMatchSound = new AudioFieldState();
+                                    fieldMatchSound.matchMusic();
+                                    startMatchButton.setEnabled(true);
+                                }
+                            });
+                            timer.setRepeats(false);
+                            timer.setInitialDelay(3000);
+                            timer.start();
+                            startMatchButton.setText("Abort Match");
+                        }
+                        else{
+                            matchStarted = false;
+                            System.out.println("Match is Aborting!");
+                            fieldMatchSound.killSounds();
+                            messageWriter.writeMessage(new StartMessage((byte) 2, (byte) 0));
+                            matchtime = 120000;
+                            startMatchButton.setText("Start Match");
+
+                            redTeamCheckBox.setEnabled(true);
+                            blueTeamCheckBox.setEnabled(true);
+                            greenTeamCheckBox.setEnabled(true);
+                            yellowTeamCheckBox.setEnabled(true);
+                            activateButton.setEnabled(true);
+                            comboCommPorts.setEnabled(true);
+
+                        }
+
                     }
                 }
         );
@@ -513,6 +548,8 @@ public class GraphicsInterface {
         c.gridy = 3;
         scoreFrame.add(bottomPanel, c);
 
+        scoreFrame.setVisible(true);
+
     }
 
     private void updateTextArea(final String text) {
@@ -526,11 +563,11 @@ public class GraphicsInterface {
 
     private void updateDashboard(){
 
-
         final Runnable dashboardUpdate = new Runnable() {
             @Override
             public void run() {
                 if(!matchStarted) {
+
                     try {
                         //System.out.println("sleeping");
                         Thread.sleep(100);
@@ -539,15 +576,34 @@ public class GraphicsInterface {
                     }
                 }
                 else {
+                    matchtime += 100;
+                    //System.out.println(matchtime);
+                    int timeleft = matchlength - matchtime;
+                    if (timeleft <= 0){
+                        fieldEndSound = new AudioFieldState();
+                        fieldEndSound.endSound();
+                        fieldMatchSound.fadeSound();
+                        matchStarted = false;
 
-
+                        redTeamCheckBox.setEnabled(true);
+                        blueTeamCheckBox.setEnabled(true);
+                        greenTeamCheckBox.setEnabled(true);
+                        yellowTeamCheckBox.setEnabled(true);
+                        activateButton.setEnabled(true);
+                        comboCommPorts.setEnabled(true);
+                    }
+                    int minute = timeleft / 60000;
+                    int second = (int)((timeleft % 60000) * .001);
+                    int millis = timeleft%1000;
+                    timeDisplay.setText(String.format("%02d:%02d:%03d", minute, second, millis).replace(' ', '0'));
+                    gameTime.setText(String.format("Match Time: %02d:%02d:%03d", minute, second, millis));
                 }
             }
 
         };
 
-        final ScheduledFuture<?> dashboardUpdater =
-                scheduler.scheduleAtFixedRate(dashboardUpdate, 100 , 100, TimeUnit.MILLISECONDS);
+        //final ScheduledFuture<?> dashboardUpdater =
+        scheduler.scheduleAtFixedRate(dashboardUpdate, 100 , 100, TimeUnit.MILLISECONDS);
 
         /*if(matchStarted) {
             scheduler.schedule(new Runnable() {
@@ -581,7 +637,7 @@ public class GraphicsInterface {
         System.setOut(new PrintStream(out, true));
         //System.setErr(new PrintStream(out, true));
     }
-    
+
 
     /*private void writeMessage(IMessage msg){
         try {

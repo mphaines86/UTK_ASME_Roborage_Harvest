@@ -3,14 +3,9 @@ package audio; /**
  */
 
 import java.io.File;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.io.IOException;
-
-import javax.sound.sampled.AudioFormat;
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.DataLine;
-import javax.sound.sampled.LineUnavailableException;
-import javax.sound.sampled.SourceDataLine;
 
 import javafx.application.Application;
 import javafx.scene.media.Media;
@@ -25,11 +20,11 @@ public class AudioPlayback{
 
     public AudioPlayback(String filename){
         mediaData = new Media(new File(filename).toURI().toString());
+        mediaPlayer = new MediaPlayer(mediaData);
 
     }
 
     public void playSound() {
-        mediaPlayer = new MediaPlayer(mediaData);
         mediaPlayer.play();
 
     }
@@ -38,7 +33,30 @@ public class AudioPlayback{
         mediaPlayer.stop();
     }
 
-    public void seekSound(double time){
-        mediaPlayer.seek(new Duration(time));
+    public void fadeSound(){
+
+        double volume = 1;
+
+        final Timer timer = new Timer();
+
+        timer.scheduleAtFixedRate(new TimerTask() {
+
+            double volume = 1;
+
+            @Override
+            public void run() {
+                if (volume <= 0){
+                    stopSound();
+                    timer.cancel();
+                    timer.purge();
+                }
+                else{
+                    //System.out.println(volume-=.0025);
+                    mediaPlayer.setVolume(volume-=.0025);
+                }
+            }
+        }, 0, 10);
+
     }
+
 }
