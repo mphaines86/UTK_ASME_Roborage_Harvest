@@ -19,7 +19,7 @@ public class AudioFieldState {
     }
 
     public void matchMusic(){
-        startup = new AudioPlayback("/home/michael/IdeaProjects/UTK_ASME_field_interface/src/audio/Survivor - Eye Of The Tiger.wav");
+        startup = new AudioPlayback("/home/michael/IdeaProjects/UTK_ASME_field_interface/src/audio/04 - HARDER, BETTER, FASTER, STRONGER.MP3");
         startup.playSound();
     }
 

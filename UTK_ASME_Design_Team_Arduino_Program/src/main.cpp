@@ -1,6 +1,7 @@
 
 #include "MessageReader.h"
 #include "process.h"
+#include "lights.h"
 
 //#define NUM_MOTORS 6
 //#define DEBOUNCE_MAX 4
@@ -34,6 +35,18 @@ struct message_t message;
 void setup(void) {
   Serial.begin(115200);
 
+	for(uint8_t i=22; i<30; i++){
+		pinMode(i, OUTPUT);
+	}
+
+	for(uint8_t i =30; i<38; i++){
+		pinMode(i, INPUT_PULLUP);
+	}
+
+	lightsSetup();
+	lightsSetPin(22);
+	lightsSetColor(ORANGE);
+
 	cli();//stop interrupts
 
 	//set timer1 interrupt at 1Hz
@@ -41,14 +54,20 @@ void setup(void) {
 	TCCR3B = 0;// same for TCCR1B
 	TCNT3  = 0;//initialize counter value to 0
 	// set compare match register for 1hz increments
-	OCR3A = F_CPU / 50000;// = (16*10^6) / (1*1024) - 1 (must be <65536)
+	OCR3A = F_CPU / 625;// = (16*10^6) / (1*1024) - 1 (must be <65536)
 	// turn on CTC mode
 	TCCR3B |= (1 << WGM32);
 	// Set CS10 and CS12 bits for 1024 prescaler
-	TCCR3B |= (1 << CS32) | (0 << CS31) | (1 << CS30);
+	TCCR3B |= (1 << CS32) | (0 << CS31) | (0 << CS30);
 	// enable timer compare interrupt
 	TIMSK3 |= (1 << OCIE3A);
 
+	TCCR4A = 0;
+	TCCR4B = 0;
+	OCR4A = F_CPU / 15625;
+	TCCR4B |= (1 << WGM42);
+	TCCR4B |= (1 << CS42) | (0 << CS41) | (1 << CS40);
+	TIMSK4 |= (1 << OCIE4A);
 	sei();
 
 	setupReader(&message);

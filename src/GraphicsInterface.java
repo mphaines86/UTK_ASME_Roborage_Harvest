@@ -167,7 +167,7 @@ public class GraphicsInterface {
                             bottomPanel.setLayout(new GridLayout(1, teamsActive));
 
                             redPanel = new JPanel();
-                            redPanel.setBackground(Color.RED);
+                            redPanel.setBackground(new Color(141, 32, 72));
                             bottomPanel.add(redPanel);
 
                             redDisplayPoints = new JLabel("<html>Red Team Points: <br> 0</html>");
@@ -212,7 +212,7 @@ public class GraphicsInterface {
                             bottomPanel.setLayout(new GridLayout(1, teamsActive));
 
                             bluePanel = new JPanel();
-                            bluePanel.setBackground(Color.BLUE);
+                            bluePanel.setBackground(new Color(0, 108, 147));
                             bottomPanel.add(bluePanel);
 
                             blueDisplayPoints = new JLabel("<html>Blue Team Points: <br> 0</html>");
@@ -257,7 +257,7 @@ public class GraphicsInterface {
 
 
                             greenPanel = new JPanel();
-                            greenPanel.setBackground(Color.GREEN);
+                            greenPanel.setBackground(new Color(0, 116, 111));
                             bottomPanel.add(greenPanel);
 
                             greenDisplayPoints = new JLabel("<html>Green Team Points: <br> 0</html>");
@@ -300,7 +300,7 @@ public class GraphicsInterface {
                             bottomPanel.setLayout(new GridLayout(1, teamsActive));
 
                             yellowPanel = new JPanel();
-                            yellowPanel.setBackground(Color.YELLOW);
+                            yellowPanel.setBackground(new Color(254, 213, 53));
                             bottomPanel.add(yellowPanel);
 
                             yellowDisplayPoints = new JLabel("<html>Yellow Team Points: <br> 0</html>");
@@ -367,6 +367,45 @@ public class GraphicsInterface {
                             timer.setRepeats(false);
                             timer.setInitialDelay(3000);
                             timer.start();
+                            final Timer timer_repeat = new Timer(100, null);
+
+                            timer_repeat.addActionListener(new ActionListener() {
+
+                                @Override
+                                public void actionPerformed(ActionEvent e) {
+                                    if(!matchStarted) {
+                                        timer_repeat.stop();
+                                    }
+                                    else {
+                                        matchtime += 100;
+                                        //System.out.println(matchtime);
+                                        int timeleft = matchlength - matchtime;
+                                        if (timeleft <= 0) {
+                                            fieldEndSound = new AudioFieldState();
+                                            fieldEndSound.endSound();
+                                            fieldMatchSound.fadeSound();
+                                            matchStarted = false;
+
+                                            redTeamCheckBox.setEnabled(true);
+                                            blueTeamCheckBox.setEnabled(true);
+                                            greenTeamCheckBox.setEnabled(true);
+                                            yellowTeamCheckBox.setEnabled(true);
+                                            activateButton.setEnabled(true);
+                                            comboCommPorts.setEnabled(true);
+                                            startMatchButton.setText("Start Match");
+                                        }
+                                        int minute = timeleft / 60000;
+                                        int second = (int) ((timeleft % 60000) * .001);
+                                        int millis = timeleft % 1000;
+                                        //System.out.println(timeleft);
+                                        timeDisplay.setText(String.format("%02d:%02d:%03d", minute, second, millis));
+                                        gameTime.setText(String.format("Match Time: %02d:%02d:%03d", minute, second, millis));
+                                    }
+                                }
+                            });
+                            timer_repeat.setInitialDelay(3000);
+                            timer_repeat.start();
+
                             startMatchButton.setText("Abort Match");
                         }
                         else{
@@ -452,7 +491,7 @@ public class GraphicsInterface {
                 JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
         //console.setWrapStyleWord(true);
         console.setEditable(false);
-        console.setForeground(Color.BLUE);
+        console.setForeground(new Color(230, 89, 51));
         c.fill = GridBagConstraints.BOTH;
         c.anchor = GridBagConstraints.PAGE_END;
         c.weighty = 1;
@@ -576,7 +615,7 @@ public class GraphicsInterface {
                     }
                 }
                 else {
-                    matchtime += 100;
+                    /*matchtime += 100;
                     //System.out.println(matchtime);
                     int timeleft = matchlength - matchtime;
                     if (timeleft <= 0){
@@ -591,12 +630,14 @@ public class GraphicsInterface {
                         yellowTeamCheckBox.setEnabled(true);
                         activateButton.setEnabled(true);
                         comboCommPorts.setEnabled(true);
+                        startMatchButton.setText("Start Match");
                     }
                     int minute = timeleft / 60000;
                     int second = (int)((timeleft % 60000) * .001);
                     int millis = timeleft%1000;
-                    timeDisplay.setText(String.format("%02d:%02d:%03d", minute, second, millis).replace(' ', '0'));
-                    gameTime.setText(String.format("Match Time: %02d:%02d:%03d", minute, second, millis));
+                    //System.out.println(timeleft);
+                    timeDisplay.setText(String.format("%02d:%02d:%03d", minute, second, millis));
+                    gameTime.setText(String.format("Match Time: %02d:%02d:%03d", minute, second, millis));*/
                 }
             }
 
