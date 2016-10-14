@@ -6,6 +6,7 @@
 
 #define uint16touint8(value, byteArray, index) {byteArray[index] = value & 0xFF; byteArray[index +1] = value >>8;}
 
+uint8_t strip_increament[] = {0, 0, 0, 0, 0, 0, 0, 0};
 
 struct team_t team_data[NUM_TEAMS];
 struct motor_t motors[NUM_MOTORS];
@@ -188,18 +189,16 @@ ISR(TIMER3_COMPA_vect){
 					poles[i].isPressed = 0;
 					team_data[poles[i].colorOwnership].score = millis() - poles[i].lastUpdate;
 					team_data[poles[i].colorOwnership].active = 0;
-					lightsSetPin(30 + i);
+					lightsSetFlash(i, 1);
 				}
 			}
 			else if (output){
-				poles[i].isPressed = 0;
-				team_data[poles[i].colorOwnership].active = 0;
 				if (!poles[i].isPressed){
 					poles[i].isPressed = 1;
 					poles[i].lastUpdate = millis();
 					team_data[poles[i].colorOwnership].active = 1;
-					lightsSetPin(30 + i);
-					lightsSetColor((color_t)poles[i].colorOwnership);
+					lightsSetFlash(i, 0);
+					lightsSetColor((color_t)poles[i].colorOwnership, i);
 				}
 			}
 		}
@@ -211,4 +210,22 @@ ISR(TIMER3_COMPA_vect){
 		}
 
 	}
+}
+
+ISR(TIMER4_COMPA_vect){
+  int i, j;
+  for(i=0; i<NUMBER_OF_STRIPS; i++){
+    if (lightsGetFlash(i)){
+      for(j=0; j<LIGHTS_PER_STRIP; j++){
+        if (j <= strip_increament[i] || j >= strip_increament[i] + 8){
+          lightsSetColor(j, BLACK, i);
+
+        }
+        else {
+						lightsSetColor(j, (color_t)poles[i].colorOwnership, i);
+        }
+      }
+    }
+  }
+
 }

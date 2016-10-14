@@ -65,6 +65,8 @@ public class GraphicsInterface {
             e.printStackTrace();
         }
 
+        fieldMatchSound = new AudioFieldState();
+
     }
 
     public void createGraphicInterface(){
@@ -359,7 +361,6 @@ public class GraphicsInterface {
                                     matchtime = 0;
                                     messageWriter.writeMessage(new StartMessage((byte) 2, (byte) 1));
                                     matchStarted = true;
-                                    fieldMatchSound = new AudioFieldState();
                                     fieldMatchSound.matchMusic();
                                     startMatchButton.setEnabled(true);
                                 }

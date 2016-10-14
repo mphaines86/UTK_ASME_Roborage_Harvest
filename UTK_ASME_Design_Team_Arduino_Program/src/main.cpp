@@ -45,7 +45,9 @@ void setup(void) {
 
 	lightsSetup();
 	lightsSetPin(22);
-	lightsSetColor(ORANGE);
+	for (uint8_t i = 0; i<8; i++){
+		lightsSetColor(ORANGE, i);
+	}
 
 	cli();//stop interrupts
 
