@@ -29,7 +29,7 @@ uint8_t lightsGetFlash(uint8_t strip){
 
 void lightsSetColor(color_t colour, uint8_t pin){
 
-  lightsSetPin(30 + pin);
+  lightsSetPin(22 + pin);
   strip_color[pin] = colour;
 
   switch (colour){
@@ -79,7 +79,7 @@ void lightsSetColor(color_t colour, uint8_t pin){
 
 void lightsSetColor(uint8_t i, color_t colour, uint8_t pin){
 
-  lightsSetPin(30 + pin);
+  lightsSetPin(22 + pin);
   strip_color[pin] = colour;
 
   switch (colour){

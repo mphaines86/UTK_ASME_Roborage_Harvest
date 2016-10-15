@@ -4,7 +4,7 @@
 
 #define FinishBlock(X) (*code_ptr = (X), code_ptr = dst++, code = 0x01)
 
-static void StuffData(uint8_t *ptr, uint8_t length, uint8_t *dst)
+static void StuffData(const uint8_t *ptr, uint16_t length, uint8_t *dst)
 {
   const uint8_t *end = ptr + length;
   uint8_t *code_ptr = dst++;
@@ -17,13 +17,12 @@ static void StuffData(uint8_t *ptr, uint8_t length, uint8_t *dst)
     }
     else {
       *dst++ = *ptr;
-      code++;
+      if(code++==0xFF)
+        FinishBlock(code);
     }
     ptr++;
-
   }
   FinishBlock(code);
-  *dst++ = 0;
 }
 
 void writerSendMessage(struct message_output_t *message){
@@ -39,7 +38,7 @@ void writerSendMessage(struct message_output_t *message){
       Serial.print(" ");
     }
 Serial.println("");
-    StuffData(outputBuffer, message->length, writeBuffer);
+    StuffData(outputBuffer, message->length - 1, writeBuffer);
 
     for(int i = 0; i < message->length + 2; i++){
       Serial.print(writeBuffer[i]);
