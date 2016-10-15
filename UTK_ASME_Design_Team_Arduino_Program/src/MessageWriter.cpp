@@ -38,7 +38,7 @@ void writerSendMessage(struct message_output_t *message){
       Serial.print(" ");
     }
 Serial.println("");
-    StuffData(outputBuffer, message->length - 1, writeBuffer);
+    StuffData(outputBuffer, message->length, writeBuffer);
 
     for(int i = 0; i < message->length + 2; i++){
       Serial.print(writeBuffer[i]);
