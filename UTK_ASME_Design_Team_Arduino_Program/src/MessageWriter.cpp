@@ -4,29 +4,28 @@
 
 #define FinishBlock(X) (*code_ptr = (X), code_ptr = dst++, code = 0x01)
 
-static void StuffData(const uint8_t *ptr, uint16_t length, uint8_t *dst)
-{
-  const uint8_t *end = ptr + length;
-  uint8_t *code_ptr = dst++;
-  uint8_t code = 0x01;
+static void StuffData(const unsigned char *ptr, unsigned char length, unsigned char *dst) {
+  const unsigned char *end = ptr + length;
+  unsigned char *code_ptr = dst++;
+  unsigned char code = 0x01;
 
-  while (ptr < end)
-  {
-    if (*ptr == 0){
+  while (ptr < end) {
+    if (*ptr == 0) {
       FinishBlock(code);
-    }
-    else {
+    } else {
       *dst++ = *ptr;
-      if(code++==0xFF)
-        FinishBlock(code);
+      code++;
     }
     ptr++;
   }
+
   FinishBlock(code);
+  *dst++ = 0;
 }
 
 void writerSendMessage(struct message_output_t *message){
-    uint8_t outputBuffer[MAX_MESSAGE_SIZE], writeBuffer[WRITE_BUFFER_SIZE];
+    uint8_t outputBuffer[message->length], writeBuffer[WRITE_BUFFER_SIZE];
+    memset(writeBuffer, 0x3E, WRITE_BUFFER_SIZE);
     outputBuffer[0] = message->length;
     outputBuffer[1] = message->action;
     for(int i=2; i < message->length; i++){
@@ -40,7 +39,7 @@ void writerSendMessage(struct message_output_t *message){
 Serial.println("");
     StuffData(outputBuffer, message->length, writeBuffer);
 
-    for(int i = 0; i < message->length + 2; i++){
+    for(int i = 0; i < message->length + 3; i++){
       Serial.print(writeBuffer[i]);
       Serial.print(" ");
     }
