@@ -33,8 +33,7 @@ public class MessageWriter implements Runnable{
         ByteBuffer buffer = ByteBuffer.wrap(rawBuffer);
         try{
             while(!close){
-
-                if(writeData){
+                if(writeData) {
                     buffer.put(data);
                     buffer.flip();
                     cobsWriter.write(buffer);

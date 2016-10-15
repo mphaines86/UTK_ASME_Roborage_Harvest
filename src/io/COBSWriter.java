@@ -23,11 +23,12 @@ public class COBSWriter {
         stuffBytes(message, stuffedOutput);
         serialComm.output.write(rawStuff, 0, stuffedOutput.remaining()); //TODO: Fix Encapsulation
         //out.write(rawStuff, 0, stuffedOutput.remaining());
+        stuffedOutput.clear();
+        //System.out.println("wrote data");
     }
 
     private static void stuffBytes(ByteBuffer source, ByteBuffer destination){
         int length = source.remaining();
-
         if (length > 254){
             System.err.println("Source length cannot be greater then 254 characters");
             return;

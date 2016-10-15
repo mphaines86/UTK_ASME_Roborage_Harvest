@@ -1,6 +1,7 @@
 package io;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 
 /**
@@ -14,9 +15,9 @@ public class MessageReader {
     int size;
 
 
-    public MessageReader(){
-        this.isr = isr;
-        buffer = new byte[512];
+    public MessageReader(InputStream in){
+        this.isr = new InputStreamReader(in);
+        buffer = new byte[256];
         size = 0;
     }
 
@@ -28,7 +29,7 @@ public class MessageReader {
 
     public boolean messageReady(){
         if (size <= 0 ){
-            return true;
+            return false;
         }
         int length = (int)buffer[0];
 

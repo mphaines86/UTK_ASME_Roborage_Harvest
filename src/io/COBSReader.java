@@ -2,6 +2,7 @@ package io;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.ByteBuffer;
 
 /**
@@ -11,62 +12,57 @@ public class COBSReader {
 
     private InputStream in;
     private byte[] rawBuffer;
-    private ByteBuffer buffer, stuffed, unstuffed;
+    private ByteBuffer buffer2, stuffed, unstuffed;
     private int bufferSize, unstuffedLength;
     private boolean validMessage = true;
 
     private Parser parser;
 
-    public COBSReader(InputStream in, int bufferSize, int unstuffedLength, Parser parser) {
+    private InputStreamReader isr;
+    private byte[] buffer;
+    private int size;
 
-        this.in = in;
-        this.bufferSize = bufferSize;
-        this.unstuffedLength = unstuffedLength;
-        this.parser = parser;
-        rawBuffer = new byte[bufferSize];
-        buffer = ByteBuffer.wrap(rawBuffer);
-        stuffed = ByteBuffer.allocate(unstuffedLength + 2);
-        unstuffed = ByteBuffer.allocate(unstuffedLength);
+
+    public COBSReader(InputStream in){
+        this.isr = new InputStreamReader(in);
+        buffer = new byte[256];
+        size = 0;
     }
 
-    public void read() throws IOException {
-        //add timeout later
+    public void readIfAvailable() throws IOException{
+        while(isr.ready()){
+            buffer[size++] = (byte)isr.read();
+        }
+    }
 
-        if (in.available() > 0) {
-            int numRead = in.read(rawBuffer);
-            buffer.clear();
-            buffer.limit(numRead);
-            while (buffer.hasRemaining()) {
-                byte current = buffer.get();
+    public boolean messageReady(){
+        if (size <= 0 ){
+            return false;
+        }
+        int length = (int)buffer[0];
 
-                //System.out.println(current);
-                if (stuffed.hasRemaining()) {
-                    stuffed.put(current);
-                } else {
-                    System.err.println("Message length exceeded in reader.");
-                    validMessage = false;
-                }
+        return size >= length;
 
-                if (current == 0) {
-                    if (validMessage) {
-                        stuffed.flip();
-                        if (!unstuffBytes(stuffed, unstuffed)) {
-                            System.err.println("Invalid Message. Message could not be unstuffed");
-                        } else {
-                            //Utility.printBytes(unstuffed);
-                            parser.parse(unstuffed);
-                        }
-                    }
-                    validMessage = true;
-                    stuffed.clear();
-                    unstuffed.clear();
+    }
 
-                }
+    public byte[] getMessage() {
+        int length = (int)buffer[0];
+        byte[] ret = new byte[length];
 
+        for (int i=0; i<size; ++i) {
+            if (i < length) { // length = 2, size = 5
+                ret[i] = buffer[i];
+            } else {
+                buffer[i - length] = buffer[i];
             }
         }
 
+        size -= length;
+
+        return ret;
     }
+
+
 
     public static boolean unstuffBytes(ByteBuffer source, ByteBuffer dest) {
         int length = source.remaining();

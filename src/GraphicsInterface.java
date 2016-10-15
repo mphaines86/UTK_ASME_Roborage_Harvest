@@ -47,6 +47,7 @@ public class GraphicsInterface {
     public GraphicsInterface(){
         comm = new serialComm();
         messageWriter = new MessageWriter(comm.getOutput());
+        (new Thread (messageWriter)).start();
         createGraphicInterface();
         updateDashboard();
         matchStarted = false;
@@ -417,7 +418,7 @@ public class GraphicsInterface {
                             matchtime = 120000;
                             startMatchButton.setText("Start Match");
 
-                            redTeamCheckBox.setEnabled(true);
+                                redTeamCheckBox.setEnabled(true);
                             blueTeamCheckBox.setEnabled(true);
                             greenTeamCheckBox.setEnabled(true);
                             yellowTeamCheckBox.setEnabled(true);
@@ -606,6 +607,7 @@ public class GraphicsInterface {
         final Runnable dashboardUpdate = new Runnable() {
             @Override
             public void run() {
+
                 if(!matchStarted) {
 
                     try {
@@ -616,6 +618,7 @@ public class GraphicsInterface {
                     }
                 }
                 else {
+                    messageWriter.writeMessage(new PingMessage(1));
                     /*matchtime += 100;
                     //System.out.println(matchtime);
                     int timeleft = matchlength - matchtime;
@@ -645,7 +648,7 @@ public class GraphicsInterface {
         };
 
         //final ScheduledFuture<?> dashboardUpdater =
-        scheduler.scheduleAtFixedRate(dashboardUpdate, 100 , 100, TimeUnit.MILLISECONDS);
+        scheduler.scheduleAtFixedRate(dashboardUpdate, 100 , 1000, TimeUnit.MILLISECONDS);
 
         /*if(matchStarted) {
             scheduler.schedule(new Runnable() {
