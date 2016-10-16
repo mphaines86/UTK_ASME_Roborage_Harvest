@@ -13,6 +13,7 @@ public class MessageParser {
             case 'b': return new BatteryMessage(data);
             case 'l': return new LimitSwitchMessage(data);
             case 'e': return new EncoderMessage(data);
+            case 'p': return new PingMessage(data);
             default: return null;
         }
     }

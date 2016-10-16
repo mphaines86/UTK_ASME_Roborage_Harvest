@@ -16,14 +16,15 @@ public class MessageReader implements Runnable{
     //byte[] buffer;
     private int size;
     private COBSReader cobsReader;
-    private boolean close = false;
+    private boolean close, messageReady;
     private ByteBuffer buffer, stuffed, unstuffed;
     private byte[] rawStuff;
 
     private static final int unstuffedMessageLength = 254;
 
     public MessageReader(InputStream in){
-
+        close = false;
+        messageReady = false;
         this.in = in;
         rawStuff = new byte[unstuffedMessageLength + 2];
         buffer = ByteBuffer.wrap(rawStuff);
@@ -36,10 +37,9 @@ public class MessageReader implements Runnable{
     public void run(){
         try {
             while (!close) {
-                System.out.println("hello");
-                if(cobsReader.read(stuffed, unstuffed)){
-                    System.out.println("Cool");
-                };
+                if (cobsReader.read(stuffed, unstuffed)) {
+                    messageReady = true;
+                }
                 Thread.sleep(10);
             }
 
@@ -52,6 +52,12 @@ public class MessageReader implements Runnable{
         }
     }
 
+    public void setClose(Boolean close){
+        this.close = close;
+    }
+    public boolean getMessageReady(){
+        return messageReady;
+    }
     /*public void readIfAvailable() throws IOException{
         while(isr.ready()){
             buffer[size++] = (byte)isr.read();
@@ -66,23 +72,27 @@ public class MessageReader implements Runnable{
 
         return size >= length;
 
-    }
+    }*/
 
     public byte[] getMessage() {
 
-        int length = (int)buffer[0];
+        int length = (int)unstuffed.get(0);
         byte[] ret = new byte[length];
+        for (int i=0; i<length; ++i) {
+            ret[i] = unstuffed.get();
+            System.out.print(ret[i]);
+            System.out.print(" ");
 
-        for (int i=0; i<size; ++i) {
-            if (i < length) { // length = 2, size = 5
-                ret[i] = buffer[i];
-            } else {
-                buffer[i - length] = buffer[i];
-            }
         }
-
-        size -= length;
-
+        System.out.println("");
+        //int index = 0;
+        /*for(int i = length; i < unstuffed.limit(); i ++){
+            unstuffed.put(index++, unstuffed.get());
+            unstuffed.put(i, (byte)0);
+        }
+        unstuffed.position(unstuffed.position() - length);*/
+        unstuffed.clear();
+        messageReady = false;
         return ret;
-    }*/
+    }
 }

@@ -70,6 +70,7 @@ public class COBSReader {
 
     public static boolean unstuffBytes(ByteBuffer source, ByteBuffer dest) {
         int length = source.remaining();
+        //System.out.println(length);
 
         if (dest.remaining() + 2 < length) {
             System.err.println("Source length greater than dest length");
@@ -85,7 +86,7 @@ public class COBSReader {
         }
 
         int index = 0;
-        while (index < length - 1) {
+        while (index < length) {
             int stop = (source.get() & 0xFF) - 1 + index;
             while (index++ < stop) {
                 dest.put(source.get());

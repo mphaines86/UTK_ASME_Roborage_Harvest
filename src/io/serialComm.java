@@ -115,7 +115,7 @@ public class serialComm implements SerialPortEventListener {
             char ch = 1; // I added this
             output.write(ch);// and this
             //adding listeners to input and output streams
-            serialPort.addEventListener(this);
+            //serialPort.addEventListener(this);
             serialPort.notifyOnDataAvailable(true);
             serialPort.notifyOnOutputEmpty(true);
         }
@@ -134,7 +134,7 @@ public class serialComm implements SerialPortEventListener {
             try {
                 byte singleData = (byte)input.read();
                 String str = new String(new byte[] { singleData },"UTF-8");
-                //System.out.print(str);
+                System.out.print(str);
             } catch (Exception e) {
                 System.err.println(e.toString());
             }

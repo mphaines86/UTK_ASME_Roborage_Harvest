@@ -12,7 +12,7 @@ public class PingMessage implements IMessage {
     public PingMessage(byte[] data){
         assert data.length == 3;
 
-        int i = 2;
+        int i = 1;
         this.ping = (int)data[++i];
     }
 
@@ -25,5 +25,7 @@ public class PingMessage implements IMessage {
         ret[0] = (byte)ret.length;
         return ret;
     }
-
+    public int getPing(){
+        return ping;
+    }
 }

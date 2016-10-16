@@ -48,10 +48,6 @@ public class GraphicsInterface {
 
     public GraphicsInterface(){
         comm = new serialComm();
-        messageWriter = new MessageWriter(comm.getOutput());
-        (new Thread (messageWriter)).start();
-        messageReader = new MessageReader(comm.getInput());
-        (new Thread (messageReader)).start();
         createGraphicInterface();
         updateDashboard();
         matchStarted = false;
@@ -137,7 +133,12 @@ public class GraphicsInterface {
                             comm.setPortname(comboCommPorts.getSelectedItem().toString());
                             comm.initialize();
                             comm.portConnect();
-
+                            messageReader = new MessageReader(comm.getInput());
+                            (new Thread (messageReader)).start();
+                            messageWriter = new MessageWriter(comm.getOutput());
+                            (new Thread (messageWriter)).start();
+                            messageReader.setClose(false);
+                            messageWriter.setClose(false);
                             activateButton.setText("Disconnect");
                             messageWriter.writeMessage(new PingMessage(1));
 
@@ -146,6 +147,8 @@ public class GraphicsInterface {
                         }
                         else if (isConnected) {
                             messageWriter.writeMessage(new PingMessage(0));
+                            messageReader.setClose(true);
+                            messageWriter.setClose(true);
                             comm.close();
                             activateButton.setText("Initialize");
                             //scheduler.shutdown();
@@ -623,36 +626,21 @@ public class GraphicsInterface {
                 }
                 else {
                     messageWriter.writeMessage(new PingMessage(1));
-                    /*matchtime += 100;
-                    //System.out.println(matchtime);
-                    int timeleft = matchlength - matchtime;
-                    if (timeleft <= 0){
-                        fieldEndSound = new AudioFieldState();
-                        fieldEndSound.endSound();
-                        fieldMatchSound.fadeSound();
-                        matchStarted = false;
+                    if (messageReader.getMessageReady()) {
+                        byte[] data = messageReader.getMessage();
+                        IMessage msg = MessageParser.parse(data);
 
-                        redTeamCheckBox.setEnabled(true);
-                        blueTeamCheckBox.setEnabled(true);
-                        greenTeamCheckBox.setEnabled(true);
-                        yellowTeamCheckBox.setEnabled(true);
-                        activateButton.setEnabled(true);
-                        comboCommPorts.setEnabled(true);
-                        startMatchButton.setText("Start Match");
+                        if(msg instanceof PingMessage){
+                            System.out.println(((PingMessage) msg).getPing());
+                        }
                     }
-                    int minute = timeleft / 60000;
-                    int second = (int)((timeleft % 60000) * .001);
-                    int millis = timeleft%1000;
-                    //System.out.println(timeleft);
-                    timeDisplay.setText(String.format("%02d:%02d:%03d", minute, second, millis));
-                    gameTime.setText(String.format("Match Time: %02d:%02d:%03d", minute, second, millis));*/
                 }
             }
 
         };
 
         //final ScheduledFuture<?> dashboardUpdater =
-        scheduler.scheduleAtFixedRate(dashboardUpdate, 100 , 1000, TimeUnit.MILLISECONDS);
+        scheduler.scheduleAtFixedRate(dashboardUpdate, 0, 100, TimeUnit.MILLISECONDS);
 
         /*if(matchStarted) {
             scheduler.schedule(new Runnable() {

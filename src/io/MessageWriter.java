@@ -14,7 +14,7 @@ public class MessageWriter implements Runnable{
     private COBSWriter cobsWriter;
     private OutputStream output;
     private Boolean writeData;
-    private Boolean close;
+    private Boolean close, active;
     private byte[] data;
 
     private static final int messageLength = 254;
@@ -22,6 +22,7 @@ public class MessageWriter implements Runnable{
     public MessageWriter(OutputStream output){
         close = false;
         writeData = false;
+        active = false;
         this.output = output;
         cobsWriter = new COBSWriter(output, messageLength + 2);
         data = new byte[messageLength];
@@ -31,9 +32,9 @@ public class MessageWriter implements Runnable{
     public void run() {
         byte[] rawBuffer = new byte[messageLength];
         ByteBuffer buffer = ByteBuffer.wrap(rawBuffer);
-        try{
-            while(!close){
-                if(writeData) {
+        try {
+            while (!close) {
+                if (writeData) {
                     buffer.put(data);
                     buffer.flip();
                     cobsWriter.write(buffer);
@@ -44,9 +45,9 @@ public class MessageWriter implements Runnable{
             }
             output.close();
 
-        }catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
-        }catch (InterruptedException ex) {
+        } catch (InterruptedException ex) {
             ex.printStackTrace();
         }
 
@@ -61,5 +62,8 @@ public class MessageWriter implements Runnable{
 
     public void setClose(Boolean close){
         this.close = close;
+    }
+    public void setActive(Boolean active) {
+        this.active = active;
     }
 }
