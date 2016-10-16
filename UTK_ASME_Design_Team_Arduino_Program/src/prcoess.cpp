@@ -44,7 +44,7 @@ void process_message(struct message_t *message) {
 			if(process_ping_message()){
 				struct message_output_t outputMessage;
 				uint8_t body[MAX_MESSAGE_SIZE];
-				body[0] = 6;
+				body[0] = 0;
 				writerPrepMessage(&outputMessage, 'p', body);
 				writerSendMessage(&outputMessage);
 				message_processed(message);

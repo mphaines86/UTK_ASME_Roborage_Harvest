@@ -42,10 +42,14 @@ void writerSendMessage(struct message_output_t *message){
     //Serial.println("");
     StuffData(outputBuffer, message->length, writeBuffer);
 
-    for(int i = 0; i < message->length + 2; i++){
+    int i = 0;
+
+    do {
       Serial.write(writeBuffer[i]);
       //Serial.print(" ");
-    }
+      i++;
+    } while(writeBuffer[i - 1] != 0);
+
     //Serial.println("");
 }
 
