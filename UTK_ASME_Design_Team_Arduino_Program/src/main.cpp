@@ -64,12 +64,12 @@ void setup(void) {
 	// enable timer compare interrupt
 	TIMSK3 |= (1 << OCIE3A);
 
-	TCCR4A = 0;
+	/*TCCR4A = 0;
 	TCCR4B = 0;
 	OCR4A = F_CPU / 15625;
 	TCCR4B |= (1 << WGM42);
 	TCCR4B |= (1 << CS42) | (0 << CS41) | (1 << CS40);
-	TIMSK4 |= (1 << OCIE4A);
+	TIMSK4 |= (1 << OCIE4A);*/
 	sei();
 
 	setupReader(&message);
