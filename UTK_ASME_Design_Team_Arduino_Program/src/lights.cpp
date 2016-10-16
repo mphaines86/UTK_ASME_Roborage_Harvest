@@ -1,5 +1,4 @@
 #include "lights.h"
-#include <Adafruit_NeoPixel.h>
 
 Adafruit_NeoPixel strip = Adafruit_NeoPixel(30, 22, NEO_GRB + NEO_KHZ800);
 

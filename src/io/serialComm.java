@@ -133,7 +133,7 @@ public class serialComm implements SerialPortEventListener {
             try {
                 byte singleData = (byte)input.read();
                 String str = new String(new byte[] { singleData },"UTF-8");
-                System.out.print(str);
+                //System.out.print(str);
             } catch (Exception e) {
                 System.err.println(e.toString());
             }

@@ -22,7 +22,7 @@ public class AudioFieldState {
 
     public AudioFieldState(){
 
-        try (Stream<Path> paths = Files.walk(Paths.get("/home/michael/IdeaProjects/UTK_ASME_field_interface/src/audio/music"))){
+        try (Stream<Path> paths = Files.walk(Paths.get("C:\\Users\\Michael Haines\\IdeaProjects\\UTK_ASME_field_interface\\src\\audio\\music"))){
             paths.forEach(filePath ->{
                 if (Files.isRegularFile(filePath)){
                     trackList.add(filePath.toString());
@@ -33,11 +33,11 @@ public class AudioFieldState {
         }
         Collections.shuffle(trackList);
         numberOfTracks = trackList.size();
-        System.out.println("Number of Tracks " + Integer.toString(numberOfTracks));
+        //System.out.println("Number of Tracks " + Integer.toString(numberOfTracks));
     }
 
     public void matchCountdown(){
-        startup = new AudioPlayback("/home/michael/IdeaProjects/UTK_ASME_field_interface/src/audio/SSM_Narrator.wav");
+        startup = new AudioPlayback("C:\\Users\\Michael Haines\\IdeaProjects\\UTK_ASME_field_interface\\src\\audio\\SSM_Narrator.wav");
         startup.playSound();
 
     }
@@ -54,7 +54,7 @@ public class AudioFieldState {
     }
 
     public void endSound(){
-        startup = new AudioPlayback("/home/michael/IdeaProjects/UTK_ASME_field_interface/src/audio/nr_name2f.wav");
+        startup = new AudioPlayback("C:\\Users\\Michael Haines\\IdeaProjects\\UTK_ASME_field_interface\\src\\audio\\nr_name2f.wav");
         startup.playSound();
     }
 

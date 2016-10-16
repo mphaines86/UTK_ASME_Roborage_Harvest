@@ -6,6 +6,7 @@
 
 //import com.sun.prism.*;
 import audio.AudioFieldState;
+import io.MessageReader;
 import io.serialComm;
 import io.MessageWriter;
 import javafx.embed.swing.JFXPanel;
@@ -29,6 +30,7 @@ public class GraphicsInterface {
 
     private serialComm comm;
     private MessageWriter messageWriter;
+    private MessageReader messageReader;
     private JComboBox comboCommPorts;
     private JTextArea console;
     private JCheckBox redTeamCheckBox, blueTeamCheckBox, greenTeamCheckBox, yellowTeamCheckBox;
@@ -48,6 +50,8 @@ public class GraphicsInterface {
         comm = new serialComm();
         messageWriter = new MessageWriter(comm.getOutput());
         (new Thread (messageWriter)).start();
+        messageReader = new MessageReader(comm.getInput());
+        (new Thread (messageReader)).start();
         createGraphicInterface();
         updateDashboard();
         matchStarted = false;
