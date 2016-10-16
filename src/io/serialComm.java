@@ -1,7 +1,7 @@
 package io;
 
 import java.io.BufferedReader;                    //BufferedReader makes reading operation efficient
-import java.io.InputStreamReader;         //InputStreamReader decodes a stream of bytes into a character set
+import java.io.InputStream;         //InputStreamReader decodes a stream of bytes into a character set
 import java.io.OutputStream;          //writes stream of bytes into serial port
 import gnu.io.CommPortIdentifier;
 import gnu.io.SerialPort;
@@ -25,7 +25,7 @@ public class serialComm implements SerialPortEventListener {
     private CommPortIdentifier portId  = null;       //my COM port
     private static final int TIME_OUT = 2000;    //time in milliseconds
     private static final int BAUD_RATE = 115200; //baud rate to 9600bps
-    public static BufferedReader input;               //declaring my input buffer
+    public static InputStream input;               //declaring my input buffer
     public static OutputStream output;                //declaring output stream
     private String name;        //user input name string
     Scanner inputName;          //user input name
@@ -109,7 +109,8 @@ public class serialComm implements SerialPortEventListener {
         //input and output channels
         try{
             //defining reader and output stream
-            input = new BufferedReader(new InputStreamReader(serialPort.getInputStream()));
+            //input = new BufferedReader(new InputStreamReader(serialPort.getInputStream()));
+            input =  serialPort.getInputStream();
             output =  serialPort.getOutputStream();
             char ch = 1; // I added this
             output.write(ch);// and this
@@ -152,7 +153,7 @@ public class serialComm implements SerialPortEventListener {
         output = null;
     }
 
-    public BufferedReader getInput(){
+    public InputStream getInput(){
         return input;
     }
 

@@ -12,24 +12,24 @@ import java.nio.ByteBuffer;
 
 public class MessageReader implements Runnable{
 
-    private InputStreamReader isr;
+    private InputStream in;
     //byte[] buffer;
     private int size;
     private COBSReader cobsReader;
     private boolean close = false;
     private ByteBuffer buffer, stuffed, unstuffed;
     private byte[] rawStuff;
-    private BufferedReader bufferedReader;
 
     private static final int unstuffedMessageLength = 254;
 
-    public MessageReader(BufferedReader in){
-        bufferedReader = in;
+    public MessageReader(InputStream in){
+
+        this.in = in;
         rawStuff = new byte[unstuffedMessageLength + 2];
         buffer = ByteBuffer.wrap(rawStuff);
         stuffed = ByteBuffer.allocate(unstuffedMessageLength + 2);
         unstuffed = ByteBuffer.allocate(unstuffedMessageLength);
-        cobsReader = new COBSReader();
+        cobsReader = new COBSReader(in);
     }
 
     @Override
@@ -37,14 +37,14 @@ public class MessageReader implements Runnable{
         try {
             while (!close) {
                 System.out.println("hello");
-                while (bufferedReader.ready()) {
-                    buffer.put((byte) bufferedReader.read());
-                    System.out.println(buffer.remaining());
-                    buffer.clear();
-                }
+                if(cobsReader.read(stuffed, unstuffed)){
+                    System.out.println("Cool");
+                };
                 Thread.sleep(10);
             }
-            bufferedReader.close();
+
+
+            in.close();
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (IOException e) {

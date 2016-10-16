@@ -39,7 +39,7 @@ struct pole_t {
 };
 
 struct start_message_t {
-	uint8_t gameTime;
+	//uint8_t gameTime;
 	uint8_t setupBit;
 	uint8_t start;
 	uint8_t teams;

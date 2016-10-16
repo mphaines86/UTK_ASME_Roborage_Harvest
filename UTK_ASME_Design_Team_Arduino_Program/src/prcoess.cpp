@@ -140,6 +140,10 @@ uint8_t process_start_message(struct start_message_t *start_message, uint8_t siz
 			active = 1;
 		}
 	}
+	else{
+		active = 0;
+	}
+
 		return 1;
 }
 
@@ -199,6 +203,7 @@ ISR(TIMER3_COMPA_vect){
 					team_data[poles[i].colorOwnership].active = 1;
 					lightsSetFlash(i, 0);
 					lightsSetColor((color_t)poles[i].colorOwnership, i);
+
 				}
 			}
 		}
