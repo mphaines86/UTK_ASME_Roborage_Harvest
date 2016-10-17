@@ -39,7 +39,7 @@ public class GraphicsInterface {
             greenPoints, yellowState, yellowButton, yellowPoints, redDisplayPoints, blueDisplayPoints,
             greenDisplayPoints, yellowDisplayPoints, timeDisplay;
     private boolean isConnected = false, matchStarted = false;
-    private int teamsActive = 0, matchtime = 0, matchlength = 120000;
+    private int teamsActive = 0, matchtime = 0, matchlength = 120000, teamSelection = 0;
     private AudioFieldState fieldStartSound, fieldMatchSound, fieldEndSound;
 
     private final ScheduledExecutorService scheduler =
@@ -170,6 +170,10 @@ public class GraphicsInterface {
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         if (redTeamCheckBox.isSelected()){
+
+                            teamSelection =~ 0x1;
+                            messageWriter.writeMessage(new StartMessage((byte) 1, (byte) 0, (byte) teamSelection));
+
                             System.out.println("Red Team is Active");
                             redState.setText("Team Red State: Active");
 
@@ -190,6 +194,10 @@ public class GraphicsInterface {
 
                         }
                         else{
+
+                            teamSelection =~ 0x1;
+                            messageWriter.writeMessage(new StartMessage((byte) 1, (byte) 0, (byte) teamSelection));
+
                             System.out.println("Red Team is Inactive");
                             redState.setText("Team Red State: Inactive");
 
@@ -218,6 +226,10 @@ public class GraphicsInterface {
                             System.out.println("Blue Team is Active");
                             blueState.setText("Team Blue State: Active");
 
+                            teamSelection =~ 0x2;
+                            messageWriter.writeMessage(new StartMessage((byte) 1, (byte) 0, (byte) teamSelection));
+
+
                             teamsActive++;
                             bottomPanel.setLayout(new GridLayout(1, teamsActive));
 
@@ -237,6 +249,9 @@ public class GraphicsInterface {
                         else{
                             System.out.println("Blue Team is Inactive");
                             blueState.setText("Team Blue State: Inactive");
+
+                            teamSelection =~ 0x2;
+                            messageWriter.writeMessage(new StartMessage((byte) 1, (byte) 0, (byte) teamSelection));
 
                             bluePanel.remove(blueDisplayPoints);
                             bottomPanel.remove(bluePanel);
@@ -262,6 +277,9 @@ public class GraphicsInterface {
                             System.out.println("Green Team is Active");
                             greenState.setText("Team Green State: Active");
 
+                            teamSelection =~ 0x4;
+                            messageWriter.writeMessage(new StartMessage((byte) 1, (byte) 0, (byte) teamSelection));
+
                             teamsActive++;
                             bottomPanel.setLayout(new GridLayout(1, teamsActive));
 
@@ -281,6 +299,9 @@ public class GraphicsInterface {
                         else{
                             System.out.println("Green Team is Inactive");
                             greenState.setText("Team Green State: Inactive");
+
+                            teamSelection =~ 0x4;
+                            messageWriter.writeMessage(new StartMessage((byte) 1, (byte) 0, (byte) teamSelection));
 
                             greenPanel.remove(greenDisplayPoints);
                             bottomPanel.remove(greenPanel);
@@ -306,6 +327,9 @@ public class GraphicsInterface {
                             System.out.println("Yellow Team is Active");
                             yellowState.setText("Team Yellow State: Active");
 
+                            teamSelection =~ 0x8;
+                            messageWriter.writeMessage(new StartMessage((byte) 1, (byte) 0, (byte) teamSelection));
+
                             teamsActive++;
                             bottomPanel.setLayout(new GridLayout(1, teamsActive));
 
@@ -325,6 +349,9 @@ public class GraphicsInterface {
                         else{
                             System.out.println("Yellow Team is Inactive");
                             yellowState.setText("Team Yellow State: Inactive");
+
+                            teamSelection =~ 0x8;
+                            messageWriter.writeMessage(new StartMessage((byte) 1, (byte) 0, (byte) teamSelection));
 
                             yellowPanel.remove(yellowDisplayPoints);
                             bottomPanel.remove(yellowPanel);
@@ -367,7 +394,7 @@ public class GraphicsInterface {
                                 @Override
                                 public void actionPerformed(ActionEvent e) {
                                     matchtime = 0;
-                                    messageWriter.writeMessage(new StartMessage((byte) 2, (byte) 1));
+                                    messageWriter.writeMessage(new StartMessage((byte) 0, (byte) 1,(byte) 0));
                                     matchStarted = true;
                                     fieldMatchSound.matchMusic();
                                     startMatchButton.setEnabled(true);
@@ -383,6 +410,7 @@ public class GraphicsInterface {
                                 @Override
                                 public void actionPerformed(ActionEvent e) {
                                     if(!matchStarted) {
+                                        messageWriter.writeMessage(new StartMessage((byte) 0, (byte) 0,(byte) 0));
                                         timer_repeat.stop();
                                     }
                                     else {
@@ -421,11 +449,11 @@ public class GraphicsInterface {
                             matchStarted = false;
                             System.out.println("Match is Aborting!");
                             fieldMatchSound.killSounds();
-                            messageWriter.writeMessage(new StartMessage((byte) 2, (byte) 0));
+                            messageWriter.writeMessage(new StartMessage((byte) 0, (byte) 1, (byte) 0));
                             matchtime = 120000;
                             startMatchButton.setText("Start Match");
 
-                                redTeamCheckBox.setEnabled(true);
+                            redTeamCheckBox.setEnabled(true);
                             blueTeamCheckBox.setEnabled(true);
                             greenTeamCheckBox.setEnabled(true);
                             yellowTeamCheckBox.setEnabled(true);
@@ -626,6 +654,7 @@ public class GraphicsInterface {
                 }
                 else {
                     messageWriter.writeMessage(new PingMessage(1));
+                    messageWriter.writeMessage(new TeamMessage(TeamMessage.Teams.BLUE_TEAM, (byte) 1,(byte) 0));
                     if (messageReader.getMessageReady()) {
                         byte[] data = messageReader.getMessage();
                         IMessage msg = MessageParser.parse(data);
@@ -633,6 +662,35 @@ public class GraphicsInterface {
                         if(msg instanceof PingMessage){
                             System.out.println(((PingMessage) msg).getPing());
                         }
+                        if (msg instanceof TeamMessage){
+                            switch (((TeamMessage) msg).getTeamsId().getValue()){
+                                case 0:
+                                    redButton.setText(String.format("Team Red Button State: %d",
+                                            ((TeamMessage) msg).getTeamsActive()));
+                                    redPoints.setText(String.format("Team Red Points: %d",
+                                            ((TeamMessage) msg).getTeamsPoints()));
+                                    break;
+                                case 1:
+                                    redButton.setText(String.format("Team Blue Button State: %d",
+                                            ((TeamMessage) msg).getTeamsActive()));
+                                    redPoints.setText(String.format("Team Blue Points: %d",
+                                            ((TeamMessage) msg).getTeamsPoints()));
+                                    break;
+                                case 2:
+                                    redButton.setText(String.format("Team Green Button State: %d",
+                                            ((TeamMessage) msg).getTeamsActive()));
+                                    redPoints.setText(String.format("Team Green Points: %d",
+                                            ((TeamMessage) msg).getTeamsPoints()));
+                                    break;
+                                case 3:
+                                    redButton.setText(String.format("Team Yellow Button State: %d",
+                                            ((TeamMessage) msg).getTeamsActive()));
+                                    redPoints.setText(String.format("Team Yellow Points: %d",
+                                            ((TeamMessage) msg).getTeamsPoints()));
+                                    break;
+                            }
+                        }
+
                     }
                 }
             }
@@ -692,7 +750,6 @@ public class GraphicsInterface {
     }*/
 
     public static void main(String[] args){
-
 
         GraphicsInterface graphics = new GraphicsInterface();
         //graphics.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);

@@ -5,25 +5,29 @@ package messaging;
  */
 public class StartMessage implements IMessage {
 
-    byte time;
-    byte start;
+    byte setupBit;
+    byte startBit;
+    byte teams;
 
-    public StartMessage(byte time, byte start){
-        this.time = time;
-        this.start = start;
+    public StartMessage(byte setupBit, byte start, byte teams){
+        this.setupBit = setupBit;
+        this.startBit = start;
+        this.teams = teams;
     }
+
     public StartMessage(byte[] data){
         assert data.length == 4;
 
-        int i = 2;
-        this.time = data[++i];
-        this.start = data[++i];
+        int i = 1;
+        this.setupBit = data[++i];
+        this.startBit = data[++i];
+        this.teams = data[++i];
     }
 
 
     public byte[] getBytes(){
         byte[] ret = new byte[]{
-                0, 's', this.time, this.start,
+                0, 's', this.setupBit, this.startBit, this.teams
         };
 
         ret[0] = (byte)ret.length;
