@@ -44,10 +44,11 @@ public class TeamMessage implements IMessage {
     }
 
     public TeamMessage(byte[] data){
-        assert data.length == 4;
+        assert data.length == 6;
 
-        int i = 2;
+        int i = 1;
         this.teamsId = Teams.fromByte(data[++i]);
+        this.teamsActive = data[++i];
         this.teamsPoints = (data[++i] << 8) + data[++i];
     }
 

@@ -20,27 +20,28 @@ void setupReader(struct message_t *message){
 
 uint8_t read_message(struct message_t *message) {
 
+	//Serial.println(message->state);
 	switch (message->state) {
 		case WAITING_FOR_MESSAGE: {
 			if (Serial.available() > 0) {
 				message->data.stuffed_body[message->data.length] = Serial.read();
-			  message->data.length++;
+				message->data.length++;
 				if (message->data.stuffed_body[message->data.length - 1] == 0){
 
 						COBSReader(message->data.stuffed_body, message->data.length, message->data.unstuffed_body);
 
 						message->data.header.length = message->data.unstuffed_body[0];
-						//Serial.print(message->data.unstuffed_body[0]);
-						//Serial.print(" ");
+						Serial.print(message->data.unstuffed_body[0]);
+						Serial.print(" ");
 						message->data.header.action = message->data.unstuffed_body[1];
-						//Serial.print(message->data.unstuffed_body[1]);
-						//Serial.print(" ");
-						for (int i=2; i<=message->data.header.length; i++){
-							message->data.body[i] = message->data.unstuffed_body[i];
-							//Serial.print(message->data.body[i]);
-							//Serial.print(" ");
+						Serial.print(message->data.unstuffed_body[1]);
+						Serial.print(" ");
+						for (int i=2; i<=message->data.header.length - 1; i++){
+							message->data.body[i - 2] = message->data.unstuffed_body[i];
+							Serial.print(message->data.body[i - 2]);
+							Serial.print(" ");
 						}
-						//Serial.println("");
+						Serial.println("");
 						message->state = MESSAGE_READY;
 						message->data.length = 0;
 				}
@@ -58,8 +59,8 @@ uint8_t read_message(struct message_t *message) {
 			message->state = WAITING_FOR_MESSAGE;
 			break;
 		}
-		return message->state == MESSAGE_READY;
 	}
+	return message->state == MESSAGE_READY;
 }
 
 void message_processed(struct message_t *message) {

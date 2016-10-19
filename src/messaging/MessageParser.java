@@ -14,6 +14,8 @@ public class MessageParser {
             case 'l': return new LimitSwitchMessage(data);
             case 'e': return new EncoderMessage(data);
             case 'p': return new PingMessage(data);
+            case 't': return new TeamMessage(data);
+            case 's': return new StartMessage(data);
             default: return null;
         }
     }

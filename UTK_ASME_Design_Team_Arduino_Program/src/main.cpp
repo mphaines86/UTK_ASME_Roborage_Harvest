@@ -76,7 +76,6 @@ void setup(void) {
 }
 
 void loop(void){
-
 	if (read_message(&message)) {
 		process_message(&message);
 		//Serial.println(1);

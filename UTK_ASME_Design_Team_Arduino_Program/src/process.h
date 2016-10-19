@@ -47,6 +47,8 @@ struct start_message_t {
 
 struct team_message_t {
 	uint8_t team;
+	uint8_t active;
+	uint8_t value;
 };
 
 uint8_t process_start_message(struct start_message_t*, uint8_t);

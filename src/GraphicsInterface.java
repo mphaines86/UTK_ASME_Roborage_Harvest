@@ -130,6 +130,7 @@ public class GraphicsInterface {
                     public void actionPerformed(ActionEvent e) {
 
                         if(!isConnected) {
+                            startMatchButton.setEnabled(true);
                             comm.setPortname(comboCommPorts.getSelectedItem().toString());
                             comm.initialize();
                             comm.portConnect();
@@ -146,6 +147,7 @@ public class GraphicsInterface {
 
                         }
                         else if (isConnected) {
+                            startMatchButton.setEnabled(false);
                             messageWriter.writeMessage(new PingMessage(0));
                             messageReader.setClose(true);
                             messageWriter.setClose(true);
@@ -171,7 +173,7 @@ public class GraphicsInterface {
                     public void actionPerformed(ActionEvent e) {
                         if (redTeamCheckBox.isSelected()){
 
-                            teamSelection =~ 0x1;
+                            teamSelection |= 1;
                             messageWriter.writeMessage(new StartMessage((byte) 1, (byte) 0, (byte) teamSelection));
 
                             System.out.println("Red Team is Active");
@@ -181,7 +183,7 @@ public class GraphicsInterface {
                             bottomPanel.setLayout(new GridLayout(1, teamsActive));
 
                             redPanel = new JPanel();
-                            redPanel.setBackground(new Color(141, 32, 72));
+                            redPanel.setBackground(new Color(196, 27, 22));
                             bottomPanel.add(redPanel);
 
                             redDisplayPoints = new JLabel("<html>Red Team Points: <br> 0</html>");
@@ -195,7 +197,7 @@ public class GraphicsInterface {
                         }
                         else{
 
-                            teamSelection =~ 0x1;
+                            teamSelection &= ~0x01;
                             messageWriter.writeMessage(new StartMessage((byte) 1, (byte) 0, (byte) teamSelection));
 
                             System.out.println("Red Team is Inactive");
@@ -226,7 +228,7 @@ public class GraphicsInterface {
                             System.out.println("Blue Team is Active");
                             blueState.setText("Team Blue State: Active");
 
-                            teamSelection =~ 0x2;
+                            teamSelection |= 1 << 1;
                             messageWriter.writeMessage(new StartMessage((byte) 1, (byte) 0, (byte) teamSelection));
 
 
@@ -250,7 +252,9 @@ public class GraphicsInterface {
                             System.out.println("Blue Team is Inactive");
                             blueState.setText("Team Blue State: Inactive");
 
-                            teamSelection =~ 0x2;
+                            teamSelection &= ~(1 << 1);
+                            System.out.println((byte) teamSelection);
+
                             messageWriter.writeMessage(new StartMessage((byte) 1, (byte) 0, (byte) teamSelection));
 
                             bluePanel.remove(blueDisplayPoints);
@@ -277,7 +281,7 @@ public class GraphicsInterface {
                             System.out.println("Green Team is Active");
                             greenState.setText("Team Green State: Active");
 
-                            teamSelection =~ 0x4;
+                            teamSelection |= 1 << 2;
                             messageWriter.writeMessage(new StartMessage((byte) 1, (byte) 0, (byte) teamSelection));
 
                             teamsActive++;
@@ -300,7 +304,7 @@ public class GraphicsInterface {
                             System.out.println("Green Team is Inactive");
                             greenState.setText("Team Green State: Inactive");
 
-                            teamSelection =~ 0x4;
+                            teamSelection &= ~(1 << 2);
                             messageWriter.writeMessage(new StartMessage((byte) 1, (byte) 0, (byte) teamSelection));
 
                             greenPanel.remove(greenDisplayPoints);
@@ -327,7 +331,7 @@ public class GraphicsInterface {
                             System.out.println("Yellow Team is Active");
                             yellowState.setText("Team Yellow State: Active");
 
-                            teamSelection =~ 0x8;
+                            teamSelection |= 1 << 3;
                             messageWriter.writeMessage(new StartMessage((byte) 1, (byte) 0, (byte) teamSelection));
 
                             teamsActive++;
@@ -350,7 +354,7 @@ public class GraphicsInterface {
                             System.out.println("Yellow Team is Inactive");
                             yellowState.setText("Team Yellow State: Inactive");
 
-                            teamSelection =~ 0x8;
+                            teamSelection &= ~(1 << 3);
                             messageWriter.writeMessage(new StartMessage((byte) 1, (byte) 0, (byte) teamSelection));
 
                             yellowPanel.remove(yellowDisplayPoints);
@@ -465,6 +469,7 @@ public class GraphicsInterface {
                     }
                 }
         );
+        startMatchButton.setEnabled(false);
         controlPanel.add(startMatchButton);
 
         statePanel = new JPanel();
@@ -653,6 +658,7 @@ public class GraphicsInterface {
                     }
                 }
                 else {
+                    //System.out.println("printing");
                     messageWriter.writeMessage(new PingMessage(1));
                     messageWriter.writeMessage(new TeamMessage(TeamMessage.Teams.BLUE_TEAM, (byte) 1,(byte) 0));
                     if (messageReader.getMessageReady()) {
@@ -698,7 +704,7 @@ public class GraphicsInterface {
         };
 
         //final ScheduledFuture<?> dashboardUpdater =
-        scheduler.scheduleAtFixedRate(dashboardUpdate, 0, 100, TimeUnit.MILLISECONDS);
+        scheduler.scheduleAtFixedRate(dashboardUpdate, 100, 100, TimeUnit.MILLISECONDS);
 
         /*if(matchStarted) {
             scheduler.schedule(new Runnable() {
