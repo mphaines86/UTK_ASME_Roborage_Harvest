@@ -675,24 +675,29 @@ public class GraphicsInterface {
                                             ((TeamMessage) msg).getTeamsActive()));
                                     redPoints.setText(String.format("Team Red Points: %d",
                                             ((TeamMessage) msg).getTeamsPoints()));
+                                    redDisplayPoints.setText("<html>Yellow Team Points:<br>" + String.valueOf(((TeamMessage) msg).getTeamsPoints() + "<br></html>"));
                                     break;
                                 case 1:
-                                    System.out.println("Cool Beans!!!");
-                                    redButton.setText(String.format("Team Blue Button State: %d",
+                                    blueButton.setText(String.format("Team Blue Button State: %d",
                                             ((TeamMessage) msg).getTeamsActive()));
-                                    redPoints.setText(String.format("Team Blue Points: %d",
+                                    bluePoints.setText(String.format("Team Blue Points: %d",
                                             ((TeamMessage) msg).getTeamsPoints()));
+                                    blueDisplayPoints.setText("<html>Blue Team Points:<br>" + String.valueOf(((TeamMessage) msg).getTeamsPoints() + "</html>"));
                                     break;
                                 case 2:
-                                    redButton.setText(String.format("Team Green Button State: %d",
+                                    greenButton.setText(String.format("Team Green Button State: %d",
                                             ((TeamMessage) msg).getTeamsActive()));
-                                    redPoints.setText(String.format("Team Green Points: %d",
+                                    greenPoints.setText(String.format("Team Green Points: %d",
+                                            ((TeamMessage) msg).getTeamsPoints()));
+                                    greenDisplayPoints.setText(String.format("\"<html>Yellow Team Points: <br> %d</html>\"",
                                             ((TeamMessage) msg).getTeamsPoints()));
                                     break;
                                 case 3:
-                                    redButton.setText(String.format("Team Yellow Button State: %d",
+                                    yellowButton.setText(String.format("Team Yellow Button State: %d",
                                             ((TeamMessage) msg).getTeamsActive()));
-                                    redPoints.setText(String.format("Team Yellow Points: %d",
+                                    yellowPoints.setText(String.format("Team Yellow Points: %d",
+                                            ((TeamMessage) msg).getTeamsPoints()));
+                                    yellowDisplayPoints.setText(String.format("\"<html>Yellow Team Points: <br> %d</html>\"",
                                             ((TeamMessage) msg).getTeamsPoints()));
                                     break;
                             }

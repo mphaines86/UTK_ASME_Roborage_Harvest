@@ -48,8 +48,8 @@ public class TeamMessage implements IMessage {
 
         int i = 1;
         this.teamsId = Teams.fromByte(data[++i]);
-        this.teamsActive = data[++i];
-        this.teamsPoints = (data[++i] << 8) + data[++i];
+        this.teamsActive = ((int)data[++i]) & 0xFF;
+        this.teamsPoints = ((((int) data[++i]) & 0xFF) << 8) | ((int)data[++i]) & 0xFF;
     }
 
     public Teams getTeamsId(){
