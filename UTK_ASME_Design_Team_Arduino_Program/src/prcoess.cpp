@@ -75,7 +75,7 @@ uint8_t process_ping_message(){
 uint8_t process_team_message(struct team_message_t *team_message, uint8_t size){
 		struct message_output_t outputMessage;
 		uint8_t data[MAX_MESSAGE_SIZE];
-		Serial.println(team_message->team);
+		//Serial.println(team_message->team);
 		data[1] = team_data[team_message->team].active;
 		data[0] = team_data[team_message->team].color;
 		uint16touint8(team_data[team_message->team].score, data, 2);
@@ -84,6 +84,14 @@ uint8_t process_team_message(struct team_message_t *team_message, uint8_t size){
 		writerSendMessage(&outputMessage);
 
 	return 1;
+}
+
+void process_begin(){
+	uint8_t i;
+	for(i=0; i<8; i++){
+		poles[i].integrator = DEBOUNCE_MAX;
+		poles[i].lastUpdate = 0;
+	}
 }
 
 
@@ -102,7 +110,6 @@ uint8_t process_start_message(struct start_message_t *start_message, uint8_t siz
 					team_data[i].active = 0;
 				}
 			}
-			Serial.println(numTeams);
 			switch (numTeams){
 				case 2:
 				case 4: {
@@ -121,9 +128,22 @@ uint8_t process_start_message(struct start_message_t *start_message, uint8_t siz
 					}
 					break;
 				}
-				case 0:
-				case 1:
 				case 3:{
+					uint8_t j = 0;
+					while(j<6){
+						for (i=0; i<4; i++){
+							if(team_data[i].active){
+								poles[j].poleId = j;
+								poles[j].colorOwnership = i;
+								poles[j].isPressed = 0;
+								j++;
+							}
+						}
+					}
+					break;
+				}
+				case 0:
+				case 1:{
 					invalidTeamConfigure = true;
 				}
 			}
@@ -182,19 +202,21 @@ static uint8_t debounce(uint16_t portRegister, uint8_t port, uint8_t poleId){
 ISR(TIMER3_COMPA_vect){
 	//Serial.println(millis());
 	if (active){
-		Serial.println("Active");
+		//Serial.println("Active");
 		uint8_t output;
 		for(uint8_t i=0; i<8; i++){
-			output = debounce(PORTC, i, i);
-			if(!output){
+			output = debounce(PINC, i, i);
+			//Serial.println(output);
+			if(output){
 				if(poles[i].isPressed){
 					poles[i].isPressed = 0;
-					team_data[poles[i].colorOwnership].score = millis() - poles[i].lastUpdate;
+					team_data[poles[i].colorOwnership].score += (millis() - poles[i].lastUpdate) / 100;
+					//Serial.println(team_data[poles[i].colorOwnership].score);
 					team_data[poles[i].colorOwnership].active = 0;
 					lightsSetFlash(i, 1);
 				}
 			}
-			else if (output){
+			else if (!output){
 				if (!poles[i].isPressed){
 					poles[i].isPressed = 1;
 					poles[i].lastUpdate = millis();
@@ -206,10 +228,12 @@ ISR(TIMER3_COMPA_vect){
 			}
 		}
 
-		for(uint8_t i=0; i<0; i++){
-				if(poles[i].isPressed){
+		for(uint8_t i=0; i<8; i++){
+			if(poles[i].isPressed){
+					team_data[poles[i].colorOwnership].score += (millis() - poles[i].lastUpdate) / 100;
 					poles[i].lastUpdate = millis();
-				}
+					//Serial.println(team_data[poles[i].colorOwnership].score);
+			}
 		}
 	}
 }
@@ -229,5 +253,4 @@ ISR(TIMER4_COMPA_vect){
       }
     }
   }
-
 }

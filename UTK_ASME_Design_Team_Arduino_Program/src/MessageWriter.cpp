@@ -35,10 +35,10 @@ void writerSendMessage(struct message_output_t *message){
       outputBuffer[i] = message->body[i - 2];
     }
 
-    for (int i = 0; i<message->length; i++){
+    //for (int i = 0; i<message->length; i++){
       //Serial.print(outputBuffer[i]);
       //Serial.print(" ");
-    }
+    //}
     //Serial.println("");
     StuffData(outputBuffer, message->length, writeBuffer);
 
@@ -58,9 +58,9 @@ void writerPrepMessage(struct message_output_t *message, uint8_t command, uint8_
   message->action = command;
   switch (command){
     case 't':{
-      message->length = 8;
-      for(int i = 2; i < 8; i++){
-        message->body[i] = body[i - 2];
+      message->length = 6;
+      for(int i = 0; i < 6; i++){
+        message->body[i] = body[i];
       }
       break;
     }

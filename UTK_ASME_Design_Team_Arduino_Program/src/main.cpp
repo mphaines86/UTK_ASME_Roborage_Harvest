@@ -49,6 +49,8 @@ void setup(void) {
 		lightsSetColor(ORANGE, i);
 	}
 
+	process_begin();
+
 	cli();//stop interrupts
 
 	//set timer1 interrupt at 1Hz

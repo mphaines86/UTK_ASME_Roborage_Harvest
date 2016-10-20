@@ -37,9 +37,9 @@ public class MessageReader implements Runnable{
     public void run(){
         try {
             while (!close) {
-                //if (cobsReader.read(stuffed, unstuffed) && !messageReady) {
-                //    messageReady = true;
-                //}
+                if (cobsReader.read(stuffed, unstuffed) && !messageReady) {
+                    messageReady = true;
+                }
                 Thread.sleep(10);
             }
 

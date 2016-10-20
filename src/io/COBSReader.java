@@ -35,11 +35,11 @@ public class COBSReader {
             buffer.clear();
             buffer.limit(numRead);
             while (buffer.hasRemaining()) {
-                byte current = buffer.get();
+                int current = buffer.get();
 
                 //System.out.println(current);
                 if (stuffed.hasRemaining()) {
-                    stuffed.put(current);
+                    stuffed.put((byte) current);
                 } else {
                     System.err.println("Message length exceeded in reader.");
                     validMessage = false;

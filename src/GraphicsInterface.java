@@ -388,7 +388,7 @@ public class GraphicsInterface {
                             greenTeamCheckBox.setEnabled(false);
                             yellowTeamCheckBox.setEnabled(false);
 
-
+                            messageWriter.writeMessage(new StartMessage((byte) 1, (byte) 0, (byte) teamSelection));
 
                             fieldStartSound = new AudioFieldState();
                             fieldStartSound.matchCountdown();
@@ -659,7 +659,7 @@ public class GraphicsInterface {
                 }
                 else {
                     //System.out.println("printing");
-                    messageWriter.writeMessage(new PingMessage(1));
+                    //messageWriter.writeMessage(new PingMessage(1));
                     messageWriter.writeMessage(new TeamMessage(TeamMessage.Teams.BLUE_TEAM, (byte) 1,(byte) 0));
                     if (messageReader.getMessageReady()) {
                         byte[] data = messageReader.getMessage();
@@ -677,6 +677,7 @@ public class GraphicsInterface {
                                             ((TeamMessage) msg).getTeamsPoints()));
                                     break;
                                 case 1:
+                                    System.out.println("Cool Beans!!!");
                                     redButton.setText(String.format("Team Blue Button State: %d",
                                             ((TeamMessage) msg).getTeamsActive()));
                                     redPoints.setText(String.format("Team Blue Points: %d",

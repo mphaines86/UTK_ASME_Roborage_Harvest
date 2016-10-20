@@ -35,7 +35,7 @@ struct pole_t {
 	uint8_t colorOwnership;
 	uint8_t isPressed;
 	uint8_t integrator;
-	uint8_t lastUpdate;
+	uint32_t lastUpdate;
 };
 
 struct start_message_t {
@@ -51,6 +51,7 @@ struct team_message_t {
 	uint8_t value;
 };
 
+void process_begin();
 uint8_t process_start_message(struct start_message_t*, uint8_t);
 uint8_t process_team_message(struct team_message_t*, uint8_t);
 uint8_t process_motor_message(struct motor_message_t*, uint8_t);

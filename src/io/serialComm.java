@@ -115,7 +115,7 @@ public class serialComm implements SerialPortEventListener {
             char ch = 1; // I added this
             output.write(ch);// and this
             //adding listeners to input and output streams
-            serialPort.addEventListener(this);
+            //serialPort.addEventListener(this);
             serialPort.notifyOnDataAvailable(true);
             serialPort.notifyOnOutputEmpty(true);
         }

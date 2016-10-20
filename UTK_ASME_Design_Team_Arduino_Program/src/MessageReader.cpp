@@ -31,17 +31,17 @@ uint8_t read_message(struct message_t *message) {
 						COBSReader(message->data.stuffed_body, message->data.length, message->data.unstuffed_body);
 
 						message->data.header.length = message->data.unstuffed_body[0];
-						Serial.print(message->data.unstuffed_body[0]);
-						Serial.print(" ");
+						//Serial.print(message->data.unstuffed_body[0]);
+						//Serial.print(" ");
 						message->data.header.action = message->data.unstuffed_body[1];
-						Serial.print(message->data.unstuffed_body[1]);
-						Serial.print(" ");
+						//Serial.print(message->data.unstuffed_body[1]);
+						//Serial.print(" ");
 						for (int i=2; i<=message->data.header.length - 1; i++){
 							message->data.body[i - 2] = message->data.unstuffed_body[i];
-							Serial.print(message->data.body[i - 2]);
-							Serial.print(" ");
+							//Serial.print(message->data.body[i - 2]);
+							//Serial.print(" ");
 						}
-						Serial.println("");
+						//Serial.println("");
 						message->state = MESSAGE_READY;
 						message->data.length = 0;
 				}
