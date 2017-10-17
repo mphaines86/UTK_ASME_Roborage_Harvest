@@ -76,12 +76,40 @@ uint8_t process_team_message(struct team_message_t *team_message, uint8_t size){
 		struct message_output_t outputMessage;
 		uint8_t data[MAX_MESSAGE_SIZE];
 		//Serial.println(team_message->team);
-		data[1] = team_data[team_message->team].active;
-		data[0] = team_data[team_message->team].color;
-		uint16touint8(team_data[team_message->team].score, data, 2);
+        if (!team_data[team_message->team].readWrite) {
+            data[1] = team_data[team_message->team].active;
+            data[0] = team_data[team_message->team].color;
+            //uint16touint8(team_data[team_message->team].score, data, 2);
+            data[2] = team_data[team_message->team].score;
+            data[3] = team_data[team_message->team].redBall;
+            data[4] = team_data[team_message->team].greenBall;
+            data[5] = team_data[team_message->team].blueBall;
+            data[6] = team_data[team_message->team].purpleBall;
+            data[7] = team_data[team_message->team].racketBall;
+            writerPrepMessage(&outputMessage, 't', data);
+            writerSendMessage(&outputMessage);
+        }
+        else{
+            if(team_message->readWrite >> 5){
+                team_data[team_message->team].racketBall = team_message->racketBall;
+            }
+            if(team_message->readWrite >> 4){
+                team_data[team_message->team].purpleBall = team_message->purpleBall;
+            }
+            if(team_message->readWrite >> 3){
+                team_data[team_message->team].blueBall = team_message->blueBall;
+            }
+            if(team_message->readWrite >> 2){
+                team_data[team_message->team].greenBall = team_message->greenBall;
+            }
+            if(team_message->readWrite >> 1){
+                team_data[team_message->team].redBall = team_message->redBall;
+            }
+            if(team_message->readWrite >> 0){
+                team_data[team_message->team].score = team_message->score;
+            }
+        }
 
-		writerPrepMessage(&outputMessage, 't', data);
-		writerSendMessage(&outputMessage);
 
 	return 1;
 }

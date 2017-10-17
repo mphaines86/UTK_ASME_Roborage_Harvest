@@ -63,6 +63,96 @@ uint8_t read_message(struct message_t *message) {
 	return message->state == MESSAGE_READY;
 }
 
+uint8_t read_message1(struct message_t *message) {
+
+	//Serial.println(message->state);
+	switch (message->state) {
+		case WAITING_FOR_MESSAGE: {
+			if (Serial1.available() > 0) {
+				message->data.stuffed_body[message->data.length] = Serial1.read();
+				message->data.length++;
+				if (message->data.stuffed_body[message->data.length - 1] == 0){
+
+					COBSReader(message->data.stuffed_body, message->data.length, message->data.unstuffed_body);
+
+					message->data.header.length = message->data.unstuffed_body[0];
+					//Serial.print(message->data.unstuffed_body[0]);
+					//Serial.print(" ");
+					message->data.header.action = message->data.unstuffed_body[1];
+					//Serial.print(message->data.unstuffed_body[1]);
+					//Serial.print(" ");
+					for (int i=2; i<=message->data.header.length - 1; i++){
+						message->data.body[i - 2] = message->data.unstuffed_body[i];
+						//Serial.print(message->data.body[i - 2]);
+						//Serial.print(" ");
+					}
+					//Serial.println("");
+					message->state = MESSAGE_READY;
+					message->data.length = 0;
+				}
+			}
+			break;
+		}
+
+		case MESSAGE_READY: {
+			message->data.length = 0;
+			break;
+		}
+
+		case MESSAGE_FAILED: {
+			Serial.println("ERROR!!! Failed to recieve message.");
+			message->state = WAITING_FOR_MESSAGE;
+			break;
+		}
+	}
+	return message->state == MESSAGE_READY;
+}
+
+uint8_t read_message2(struct message_t *message) {
+
+	//Serial.println(message->state);
+	switch (message->state) {
+		case WAITING_FOR_MESSAGE: {
+			if (Serial2.available() > 0) {
+				message->data.stuffed_body[message->data.length] = Serial2.read();
+				message->data.length++;
+				if (message->data.stuffed_body[message->data.length - 1] == 0){
+
+					COBSReader(message->data.stuffed_body, message->data.length, message->data.unstuffed_body);
+
+					message->data.header.length = message->data.unstuffed_body[0];
+					//Serial.print(message->data.unstuffed_body[0]);
+					//Serial.print(" ");
+					message->data.header.action = message->data.unstuffed_body[1];
+					//Serial.print(message->data.unstuffed_body[1]);
+					//Serial.print(" ");
+					for (int i=2; i<=message->data.header.length - 1; i++){
+						message->data.body[i - 2] = message->data.unstuffed_body[i];
+						//Serial.print(message->data.body[i - 2]);
+						//Serial.print(" ");
+					}
+					//Serial.println("");
+					message->state = MESSAGE_READY;
+					message->data.length = 0;
+				}
+			}
+			break;
+		}
+
+		case MESSAGE_READY: {
+			message->data.length = 0;
+			break;
+		}
+
+		case MESSAGE_FAILED: {
+			Serial.println("ERROR!!! Failed to recieve message.");
+			message->state = WAITING_FOR_MESSAGE;
+			break;
+		}
+	}
+	return message->state == MESSAGE_READY;
+}
+
 void message_processed(struct message_t *message) {
 	message->state = WAITING_FOR_MESSAGE;
 }

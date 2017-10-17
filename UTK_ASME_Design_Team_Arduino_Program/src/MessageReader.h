@@ -31,6 +31,8 @@ struct message_t {
 
 void setupReader(struct message_t *);
 uint8_t read_message(struct message_t *);
+uint8_t read_message1(struct message_t *);
+uint8_t read_message2(struct message_t *);
 void message_processed(struct message_t *);
 
 #endif // COMMUNICATE_MESSAGE_H_

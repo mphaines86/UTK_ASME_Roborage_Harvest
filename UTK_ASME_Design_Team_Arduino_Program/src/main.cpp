@@ -31,9 +31,13 @@ int main(){
 }
 
 struct message_t message;
+struct message_t message1;
+struct message_t message2;
 
 void setup(void) {
-  Serial.begin(115200);
+    Serial.begin(115200);
+	Serial1.begin(115200);
+	Serial2.begin(115200);
 
 	for(uint8_t i=22; i<30; i++){
 		pinMode(i, OUTPUT);
@@ -75,6 +79,8 @@ void setup(void) {
 	sei();
 
 	setupReader(&message);
+	setupReader(&message1);
+	setupReader(&message2);
 }
 
 void loop(void){
@@ -83,5 +89,13 @@ void loop(void){
 		//Serial.println(1);
 		//message_processed(&message);
 	}
+	else if (read_message1(&message1)){
+		process_message(&message1);
+	}
+
+	else if (read_message2(&message2)){
+		process_message(&message2);
+	}
+
 
 }

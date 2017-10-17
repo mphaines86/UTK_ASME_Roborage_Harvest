@@ -27,7 +27,13 @@ typedef enum{
 struct team_t {
 	uint8_t color;
 	uint8_t active;
-	uint16_t score;
+	uint8_t score;
+	uint8_t redBall;
+	uint8_t greenBall;
+	uint8_t blueBall;
+	uint8_t purpleBall;
+    uint8_t racketBall;
+    uint8_t readWrite;
 };
 
 struct pole_t {
@@ -48,7 +54,13 @@ struct start_message_t {
 struct team_message_t {
 	uint8_t team;
 	uint8_t active;
-	uint8_t value;
+    uint8_t score;
+    uint8_t redBall;
+    uint8_t greenBall;
+    uint8_t blueBall;
+    uint8_t purpleBall;
+    uint8_t racketBall;
+    uint8_t readWrite;
 };
 
 void process_begin();
