@@ -14,6 +14,8 @@ import messaging.*;
 
 import javax.swing.*;
 import javax.swing.Timer;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.IOException;
@@ -33,14 +35,16 @@ public class GraphicsInterface {
     private MessageReader messageReader;
     private JComboBox comboCommPorts;
     private JTextArea console;
+    private JSpinner redTeamScore, blueTeamScore, greenTeamScore, yellowTeamScore;
     private JCheckBox redTeamCheckBox, blueTeamCheckBox, greenTeamCheckBox, yellowTeamCheckBox;
-    private JButton activateButton, startMatchButton;
+
+    private JButton activateButton, startMatchButton, redTeamPestilence, blueTeamPestilence, greenTeamPestilence, yellowTeamPestilence;;
     private JLabel gameTime, redState, redButton, redPoints, blueState, blueButton, bluePoints, greenState, greenButton,
             greenPoints, yellowState, yellowButton, yellowPoints, redDisplayPoints, blueDisplayPoints,
             greenDisplayPoints, yellowDisplayPoints, timeDisplay;
     private boolean isConnected = false, matchStarted = false;
     private int teamsActive = 0, matchtime = 0, matchlength = 120000, teamSelection = 0;
-    private AudioFieldState fieldStartSound, fieldMatchSound, fieldEndSound;
+    private AudioFieldState fieldStartSound, fieldMatchSound, fieldEndSound, pestilenceSound;
 
     private final ScheduledExecutorService scheduler =
             Executors.newScheduledThreadPool(1);
@@ -481,52 +485,88 @@ public class GraphicsInterface {
         mainFrame.add(statePanel, c);
 
         redState = new JLabel();
-        redState.setText("Team Red State: Inactive");
+        redState.setText("Red Team Score:");
         statePanel.add(redState);
 
-        redButton = new JLabel();
-        redButton.setText("Team Red Button State: 0");
-        statePanel.add(redButton);
+        redTeamScore = new JSpinner();
+        statePanel.add(redTeamScore);
 
-        redPoints = new JLabel();
-        redPoints.setText("Team Red Points: 0");
-        statePanel.add(redPoints);
+        redTeamPestilence = new JButton();
+        redTeamPestilence.setText("Red Team Pestilence");
+        statePanel.add(redTeamPestilence);
+        redTeamPestilence.addActionListener(
+                new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        pestilenceSound = new AudioFieldState();
+                        pestilenceSound.pestilenceSound();
+                        //messageWriter.writeMessage();
+                    }
+                }
+        );
 
         blueState = new JLabel();
-        blueState.setText("Team Blue State: Inactive");
+        blueState.setText("Blue Team Score:");
         statePanel.add(blueState);
 
-        blueButton = new JLabel();
-        blueButton.setText("Team Blue Button State: 0");
-        statePanel.add(blueButton);
+        blueTeamScore = new JSpinner();
+        statePanel.add(blueTeamScore);
 
-        bluePoints = new JLabel();
-        bluePoints.setText("Team Blue Points: 0");
-        statePanel.add(bluePoints);
+        blueTeamPestilence = new JButton();
+        blueTeamPestilence.setText("Blue Team Pestilence");
+        statePanel.add(blueTeamPestilence);
+        blueTeamPestilence.addActionListener(
+                new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        pestilenceSound = new AudioFieldState();
+                        pestilenceSound.pestilenceSound();
+                        //messageWriter.writeMessage();
+                    }
+                }
+        );
 
         greenState = new JLabel();
-        greenState.setText("Team Green State: Inactive");
+        greenState.setText("Green Team Score:");
         statePanel.add(greenState);
 
-        greenButton = new JLabel();
-        greenButton.setText("Team Green Button State: 0");
-        statePanel.add(greenButton);
+        greenTeamScore = new JSpinner();
+        statePanel.add(greenTeamScore);
 
-        greenPoints = new JLabel();
-        greenPoints.setText("Team Green Points: 0");
-        statePanel.add(greenPoints);
+        greenTeamPestilence = new JButton();
+        greenTeamPestilence.setText("Green Team Pestilence");
+        statePanel.add(greenTeamPestilence);
+        greenTeamPestilence.addActionListener(
+                new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        pestilenceSound = new AudioFieldState();
+                        pestilenceSound.pestilenceSound();
+                        //messageWriter.writeMessage();
+                    }
+                }
+        );
 
         yellowState = new JLabel();
-        yellowState.setText("Team Green State: Inactive");
+        yellowState.setText("Purple Team Score:");
         statePanel.add(yellowState);
 
-        yellowButton = new JLabel();
-        yellowButton.setText("Team Yellow Button State: 0");
-        statePanel.add(yellowButton);
+        yellowTeamScore = new JSpinner();
+        statePanel.add(yellowTeamScore);
 
-        yellowPoints = new JLabel();
-        yellowPoints.setText("Team Yellow Points: 0");
-        statePanel.add(yellowPoints);
+        yellowTeamPestilence = new JButton();
+        yellowTeamPestilence.setText("Purple Team Pestilence");
+        statePanel.add(yellowTeamPestilence);
+        yellowTeamPestilence.addActionListener(
+                new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        pestilenceSound = new AudioFieldState();
+                        pestilenceSound.pestilenceSound();
+                        //messageWriter.writeMessage();
+                    }
+                }
+        );
 
         console = new JTextArea();
         JScrollPane scrollPane = new JScrollPane(console,
@@ -649,7 +689,6 @@ public class GraphicsInterface {
             public void run() {
 
                 if(!matchStarted) {
-
                     try {
                         //System.out.println("sleeping");
                         Thread.sleep(100);
@@ -675,7 +714,8 @@ public class GraphicsInterface {
                                             ((TeamMessage) msg).getTeamsActive()));
                                     redPoints.setText(String.format("Team Red Points: %d",
                                             ((TeamMessage) msg).getTeamsPoints()));
-                                    redDisplayPoints.setText("<html>Yellow Team Points:<br>" + String.valueOf(((TeamMessage) msg).getTeamsPoints() + "<br></html>"));
+                                    redTeamScore.setValue(String.valueOf(((TeamMessage) msg).getTeamsPoints()));
+                                    redDisplayPoints.setText("<html>Red Team Points:<br>" + redTeamScore.getValue() + "<br></html>");
                                     break;
                                 case 1:
                                     blueButton.setText(String.format("Team Blue Button State: %d",

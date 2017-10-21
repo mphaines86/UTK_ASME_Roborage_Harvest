@@ -58,6 +58,11 @@ public class AudioFieldState {
         startup.playSound();
     }
 
+    public void pestilenceSound(){
+        startup = new AudioPlayback(System.getProperty("user.dir") + "/src/audio/Deception Horn.mp3");
+        startup.playSound();
+    }
+
     public void fadeSound(){
         startup.fadeSound();
     }
