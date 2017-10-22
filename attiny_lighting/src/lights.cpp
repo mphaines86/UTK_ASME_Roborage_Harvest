@@ -1,13 +1,13 @@
 #include "lights.h"
 
-Adafruit_NeoPixel strip = Adafruit_NeoPixel(30, 0, NEO_GRB + NEO_KHZ800);
+Adafruit_NeoPixel strip = Adafruit_NeoPixel(30, 4, NEO_GRB + NEO_KHZ800);
 
 color_t strip_color[] = {ORANGE, WHITE, ORANGE, WHITE, ORANGE, WHITE, ORANGE, WHITE};
 uint8_t strip_flashing[NUMBER_OF_STRIPS];
 
 void lightsSetup(){
     strip.begin();
-    strip.setPin(0);
+    strip.setPin(4);
     strip.show();
     strip.setBrightness(100);
 }

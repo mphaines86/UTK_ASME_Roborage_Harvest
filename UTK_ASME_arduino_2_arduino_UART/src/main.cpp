@@ -111,6 +111,7 @@ BLYNK_WRITE(V9){
 void setup(void) {
     Serial.begin(115200);
     Blynk.begin(Serial, auth);
+    Serial1.begin(115200);
 
 
     for (uint8_t i = 0; i < NUM_TEAMS - 2; ++i) {
@@ -121,11 +122,13 @@ void setup(void) {
 
 void loop(void) {
 
+    Blynk.run();
+
     for (int i = 0; i < NUM_TEAMS - 2; ++i) {
 
         if (team_data[i].readWrite) {
             uint8_t data[MAX_MESSAGE_SIZE];
-            struct message_output_t outputMessage;
+            struct message_output_t outputMessage{};
             data[1] = 1;
             data[0] = team_data[i].color;
             //uint16touint8(team_data[team_message->team].score, data, 2);

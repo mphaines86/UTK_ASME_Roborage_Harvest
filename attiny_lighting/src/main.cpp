@@ -39,13 +39,21 @@ void Delay_us(int delayus){
 
 void setup(void){
     pinMode(1, INPUT);
-    lightsSetPin(0);
-    lightsSetColor(RED, 0);
+    lightsSetup();
+    lightsSetColor(ORANGE, 4);
 }
 
 void loop(void){
-    uint8_t pinValue = (PINB >> 1) & 0b0000011;
-    if (pinValue == 1 && pinValue != flagBit){
+    //uint8_t pinValue = (PINB >> 1) & 0b0000011;
+
+    for (uint8_t i = 0; i < 30; i+=2) {
+        lightsSetColor(i, ORANGE, 4);
+    }
+    for (uint8_t i = 1; i < 30; i+=2) {
+        lightsSetColor(i, WHITE, 4);
+    }
+
+    /*if (pinValue == 1 && pinValue != flagBit){
         lightsSetColor(BLUE, 0);
         flagBit = pinValue;
     }
@@ -66,5 +74,5 @@ void loop(void){
             lightsSetColor(i, WHITE, 0);
         }
         flagBit = pinValue;
-    }
+    }*/
 }

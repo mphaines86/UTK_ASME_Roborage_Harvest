@@ -45,7 +45,7 @@ void writerSendMessage(struct message_output_t *message){
     int i = 0;
 
     do {
-      Serial.write(writeBuffer[i]);
+      Serial1.write(writeBuffer[i]);
       //Serial.print(" ");
       i++;
     } while(writeBuffer[i - 1] != 0);
