@@ -58,21 +58,6 @@ public class MessageReader implements Runnable{
     public boolean getMessageReady(){
         return messageReady;
     }
-    /*public void readIfAvailable() throws IOException{
-        while(isr.ready()){
-            buffer[size++] = (byte)isr.read();
-        }
-    }
-
-    public boolean messageReady(){
-        if (size <= 0 ){
-            return false;
-        }
-        int length = (int)buffer[0];
-
-        return size >= length;
-
-    }*/
 
     public byte[] getMessage() {
 

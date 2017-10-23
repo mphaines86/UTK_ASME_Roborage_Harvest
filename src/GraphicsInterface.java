@@ -500,7 +500,10 @@ public class GraphicsInterface {
                     public void actionPerformed(ActionEvent e) {
                         pestilenceSound = new AudioFieldState();
                         pestilenceSound.pestilenceSound();
-                        //messageWriter.writeMessage();
+                        redTeamScore.setValue((Integer) redTeamScore.getValue() - 10);
+                        messageWriter.writeMessage(new TeamMessage(TeamMessage.Teams.Red_TEAM, 1, (byte) redTeamScore.getValue(),
+                                0, 0, 0, 0, 0, 0x04));
+
                     }
                 }
         );
@@ -698,8 +701,9 @@ public class GraphicsInterface {
                 }
                 else {
                     //System.out.println("printing");
-                    //messageWriter.writeMessage(new PingMessage(1));
-                    messageWriter.writeMessage(new TeamMessage(TeamMessage.Teams.BLUE_TEAM, (byte) 1,(byte) 0));
+                    messageWriter.writeMessage(new PingMessage(1));
+                    messageWriter.writeMessage(new TeamMessage(TeamMessage.Teams.Red_TEAM, (byte) 1,(byte) 0, (byte) 0,
+                            (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0));
                     if (messageReader.getMessageReady()) {
                         byte[] data = messageReader.getMessage();
                         IMessage msg = MessageParser.parse(data);

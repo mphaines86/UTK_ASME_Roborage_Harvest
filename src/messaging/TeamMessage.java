@@ -31,16 +31,25 @@ public class TeamMessage implements IMessage {
     private Teams teamsId;
     private int teamsActive;
     private int teamsPoints;
-    private int teamsMsb;
-    private int teamsLsb;
+    private int teamsRedBalls;
+    private int teamsBlueBalls;
+    private int teamsGreenBalls;
+    private int teamsPurpleBalls;
+    private int teamsRacketBalls;
+    private int teamsReadWrite;
 
-    public TeamMessage(Teams teamsId,int teamsActive, int teamsPoints){
+    public TeamMessage(Teams teamsId,int teamsActive, int teamsPoints, int teamsRedBalls,
+            int teamsBlueBalls, int teamsGreenBalls, int teamsPurpleBalls, int teamsRacketBalls, int teamsReadWrite){
 
         this.teamsId = teamsId;
         this.teamsActive = teamsActive;
         this.teamsPoints = teamsPoints;
-        this.teamsLsb = teamsPoints & 0xFF;
-        this.teamsMsb = (teamsPoints & 0xFF00) >> 8;
+        this.teamsRedBalls = teamsRedBalls;
+        this.teamsBlueBalls = teamsBlueBalls;
+        this.teamsGreenBalls = teamsGreenBalls;
+        this.teamsPurpleBalls = teamsPurpleBalls;
+        this.teamsRacketBalls = teamsRacketBalls;
+        this.teamsReadWrite = teamsReadWrite;
     }
 
     public TeamMessage(byte[] data){
@@ -66,7 +75,9 @@ public class TeamMessage implements IMessage {
 
     public byte[] getBytes(){
         byte[] ret = new byte[]{
-                0, 't',this.teamsId.getValue(), (byte) this.teamsActive, (byte)this.teamsMsb, (byte)this.teamsLsb
+                0, 't',this.teamsId.getValue(), (byte) this.teamsActive, (byte) this.teamsPoints,
+                (byte) this.teamsRedBalls, (byte) this.teamsBlueBalls, (byte) this.teamsGreenBalls,
+                (byte) this.teamsPurpleBalls, (byte) this.teamsRacketBalls, (byte) this.teamsReadWrite
         };
         ret[0] = (byte)ret.length;
         return ret;
