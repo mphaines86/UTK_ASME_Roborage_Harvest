@@ -501,7 +501,7 @@ public class GraphicsInterface {
                         pestilenceSound = new AudioFieldState();
                         pestilenceSound.pestilenceSound();
                         redTeamScore.setValue((Integer) redTeamScore.getValue() - 10);
-                        messageWriter.writeMessage(new TeamMessage(TeamMessage.Teams.Red_TEAM, 1, (byte) redTeamScore.getValue(),
+                        messageWriter.writeMessage(new TeamMessage(TeamMessage.Teams.Red_TEAM, 1, ((Integer) redTeamScore.getValue()).byteValue(),
                                 0, 0, 0, 0, 0, 0x04));
 
                     }
@@ -701,7 +701,7 @@ public class GraphicsInterface {
                 }
                 else {
                     //System.out.println("printing");
-                    messageWriter.writeMessage(new PingMessage(1));
+                    //messageWriter.writeMessage(new PingMessage(1));
                     messageWriter.writeMessage(new TeamMessage(TeamMessage.Teams.Red_TEAM, (byte) 1,(byte) 0, (byte) 0,
                             (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0));
                     if (messageReader.getMessageReady()) {
@@ -714,12 +714,15 @@ public class GraphicsInterface {
                         if (msg instanceof TeamMessage){
                             switch (((TeamMessage) msg).getTeamsId().getValue()){
                                 case 0:
-                                    redButton.setText(String.format("Team Red Button State: %d",
-                                            ((TeamMessage) msg).getTeamsActive()));
-                                    redPoints.setText(String.format("Team Red Points: %d",
-                                            ((TeamMessage) msg).getTeamsPoints()));
-                                    redTeamScore.setValue(String.valueOf(((TeamMessage) msg).getTeamsPoints()));
-                                    redDisplayPoints.setText("<html>Red Team Points:<br>" + redTeamScore.getValue() + "<br></html>");
+                                    System.out.println("Update Red Team");
+                                    //redButton.setText(String.format("Team Red Button State: %d",
+                                    //        ((TeamMessage) msg).getTeamsActive()));
+                                    //redPoints.setText(String.format("Team Red Points: %d",
+                                    //        ((TeamMessage) msg).getTeamsPoints()));
+                                    System.out.println(String.valueOf(((TeamMessage) msg).getTeamsPoints()));
+                                    //redTeamScore.setValue(String.valueOf(((TeamMessage) msg).getTeamsPoints()));
+                                    //redDisplayPoints.setText("<html>Red Team Points:<br>" + redTeamScore.getValue() + "<br></html>");
+                                    System.out.println("Finish Update");
                                     break;
                                 case 1:
                                     blueButton.setText(String.format("Team Blue Button State: %d",

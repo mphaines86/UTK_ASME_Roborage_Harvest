@@ -42,11 +42,6 @@ void process_message(struct message_t *message) {
 
 		case 'p':
 			if(process_ping_message()){
-				struct message_output_t outputMessage;
-				uint8_t body[MAX_MESSAGE_SIZE];
-				body[0] = 0;
-				writerPrepMessage(&outputMessage, 'p', body);
-				writerSendMessage(&outputMessage);
 				message_processed(message);
 			}
 			break;
@@ -66,15 +61,18 @@ void process_message(struct message_t *message) {
 }
 
 uint8_t process_ping_message(){
-	//lasttime = millis();
-	//Serial.println("Ping");
+	struct message_output_t outputMessage{};
+	uint8_t body[MAX_MESSAGE_SIZE - 2];
+	body[0] = 1;
+	writerPrepMessage(&outputMessage, 'p', body);
+	writerSendMessage(&outputMessage);
 	return 1;
 
 }
 
 uint8_t process_team_message(struct team_message_t *team_message, uint8_t size){
-		struct message_output_t outputMessage;
-		uint8_t data[MAX_MESSAGE_SIZE];
+		struct message_output_t outputMessage{};
+		uint8_t data[MAX_MESSAGE_SIZE - 2];
 		//Serial.println(team_message->team);
         if (!team_data[team_message->team].readWrite) {
             data[1] = team_data[team_message->team].active;
@@ -86,31 +84,35 @@ uint8_t process_team_message(struct team_message_t *team_message, uint8_t size){
             data[5] = team_data[team_message->team].blueBall;
             data[6] = team_data[team_message->team].purpleBall;
             data[7] = team_data[team_message->team].racketBall;
-            writerPrepMessage(&outputMessage, 't', data);
-            writerSendMessage(&outputMessage);
+			data[8] = team_data[team_message->team].readWrite;
+            //writerPrepMessage(&outputMessage, 't', data);
+            //writerSendMessage(&outputMessage);
         }
         else{
-            if(team_message->readWrite >> 5){
+            if(team_message->readWrite >> 7){
                 team_data[team_message->team].racketBall = team_message->racketBall;
             }
-            if(team_message->readWrite >> 4){
+            if(team_message->readWrite >> 6){
                 team_data[team_message->team].purpleBall = team_message->purpleBall;
             }
-            if(team_message->readWrite >> 3){
+            if(team_message->readWrite >> 5){
                 team_data[team_message->team].blueBall = team_message->blueBall;
             }
-            if(team_message->readWrite >> 2){
+            if(team_message->readWrite >> 4){
                 team_data[team_message->team].greenBall = team_message->greenBall;
             }
-            if(team_message->readWrite >> 1){
+            if(team_message->readWrite >> 3){
                 team_data[team_message->team].redBall = team_message->redBall;
             }
-            if(team_message->readWrite >> 0){
+            if(team_message->readWrite >> 2){
                 team_data[team_message->team].score = team_message->score;
             }
         }
-
-
+        struct message_output_t testOutputMessage{};
+        uint8_t testData[MAX_MESSAGE_SIZE - 2];
+        data[0] = team_message->readWrite;
+        writerPrepMessage(&testOutputMessage, 'p', testData);
+        writerSendMessage(&testOutputMessage);
 	return 1;
 }
 
@@ -132,6 +134,7 @@ uint8_t process_start_message(struct start_message_t *start_message, uint8_t siz
 						team_data[i].active = 1;
 						team_data[i].color = i;
 						team_data[i].score = 0;
+						team_data[i].readWrite = 0;
 						numTeams++;
 				}
 				else{
@@ -230,39 +233,6 @@ static uint8_t debounce(uint16_t portRegister, uint8_t port, uint8_t poleId){
 ISR(TIMER3_COMPA_vect){
 	//Serial.println(millis());
 	if (active){
-		//Serial.println("Active");
-		uint8_t output;
-		for(uint8_t i=0; i<8; i++){
-			output = debounce(PINC, i, i);
-			//Serial.println(output);
-			if(output){
-				if(poles[i].isPressed){
-					poles[i].isPressed = 0;
-					team_data[poles[i].colorOwnership].score += (millis() - poles[i].lastUpdate) / 100;
-					//Serial.println(team_data[poles[i].colorOwnership].score);
-					team_data[poles[i].colorOwnership].active = 0;
-					lightsSetFlash(i, 1);
-				}
-			}
-			else if (!output){
-				if (!poles[i].isPressed){
-					poles[i].isPressed = 1;
-					poles[i].lastUpdate = millis();
-					team_data[poles[i].colorOwnership].active = 1;
-					lightsSetFlash(i, 0);
-					lightsSetColor((color_t)poles[i].colorOwnership, i);
-
-				}
-			}
-		}
-
-		for(uint8_t i=0; i<8; i++){
-			if(poles[i].isPressed){
-					team_data[poles[i].colorOwnership].score += (millis() - poles[i].lastUpdate) / 100;
-					poles[i].lastUpdate = millis();
-					//Serial.println(team_data[poles[i].colorOwnership].score);
-			}
-		}
 	}
 }
 

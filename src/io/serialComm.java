@@ -50,7 +50,6 @@ public class serialComm implements SerialPortEventListener {
             }
 
         }
-        portList.add("/dev/ttyACM0");
     }
     public void initialize(){
         //portname = "/dev/ttyACM0";
@@ -112,8 +111,8 @@ public class serialComm implements SerialPortEventListener {
             //input = new BufferedReader(new InputStreamReader(serialPort.getInputStream()));
             input =  serialPort.getInputStream();
             output =  serialPort.getOutputStream();
-            char ch = 1; // I added this
-            output.write(ch);// and this
+            //char ch = 1; // I added this
+            //output.write(ch);// and this
             //adding listeners to input and output streams
             //serialPort.addEventListener(this);
             serialPort.notifyOnDataAvailable(true);

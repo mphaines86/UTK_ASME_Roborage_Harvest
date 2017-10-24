@@ -47,11 +47,11 @@ void setup(void) {
 		pinMode(i, INPUT_PULLUP);
 	}
 
-	lightsSetup();
-	lightsSetPin(22);
-	for (uint8_t i = 0; i<8; i++){
-		lightsSetColor(ORANGE, i);
-	}
+	//lightsSetup();
+	//lightsSetPin(22);
+	//for (uint8_t i = 0; i<8; i++){
+	//	lightsSetColor(ORANGE, i);
+	//}
 
 	process_begin();
 
@@ -89,13 +89,13 @@ void loop(void){
 		//Serial.println(1);
 		//message_processed(&message);
 	}
-	else if (read_message1(&message1)){
+	/*else if (read_message1(&message1)){
 		process_message(&message1);
 	}
 
 	else if (read_message2(&message2)){
 		process_message(&message2);
-	}
+	}*/
 
 
 }

@@ -28,7 +28,7 @@ static void StuffData(const uint8_t *ptr, uint16_t length, uint8_t *dst)
 
 void writerSendMessage(struct message_output_t *message){
     uint8_t outputBuffer[message->length], writeBuffer[WRITE_BUFFER_SIZE];
-    memset(writeBuffer, 0x3E, WRITE_BUFFER_SIZE);
+    memset(writeBuffer, 0x00, WRITE_BUFFER_SIZE);
     outputBuffer[0] = message->length;
     outputBuffer[1] = message->action;
     for(int i=2; i < message->length; i++){
@@ -58,8 +58,8 @@ void writerPrepMessage(struct message_output_t *message, uint8_t command, uint8_
   message->action = command;
   switch (command){
     case 't':{
-      message->length = 9;
-      for(int i = 0; i < 9; i++){
+      message->length = 11;
+      for(int i = 0; i < 11; i++){
         message->body[i] = body[i];
       }
       break;

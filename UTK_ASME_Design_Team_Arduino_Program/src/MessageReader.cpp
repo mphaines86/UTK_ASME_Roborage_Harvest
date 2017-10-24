@@ -22,10 +22,11 @@ uint8_t read_message(struct message_t *message) {
 
 	//Serial.println(message->state);
 	switch (message->state) {
-		case WAITING_FOR_MESSAGE: {
+		case WAITING_FOR_MESSAGE:{
 			if (Serial.available() > 0) {
 				message->data.stuffed_body[message->data.length] = Serial.read();
 				message->data.length++;
+				// Serial.println(message->data.stuffed_body[message->data.length]);
 				if (message->data.stuffed_body[message->data.length - 1] == 0){
 
 						COBSReader(message->data.stuffed_body, message->data.length, message->data.unstuffed_body);
@@ -41,6 +42,7 @@ uint8_t read_message(struct message_t *message) {
 							//Serial.print(message->data.body[i - 2]);
 							//Serial.print(" ");
 						}
+						//Serial.println(1);
 						//Serial.println("");
 						message->state = MESSAGE_READY;
 						message->data.length = 0;

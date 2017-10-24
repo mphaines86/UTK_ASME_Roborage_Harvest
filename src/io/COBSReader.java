@@ -37,7 +37,8 @@ public class COBSReader {
             while (buffer.hasRemaining()) {
                 int current = buffer.get();
 
-                //System.out.println(current);
+                System.out.print(current);
+                System.out.print(" ");
                 if (stuffed.hasRemaining()) {
                     stuffed.put((byte) current);
                 } else {
@@ -49,15 +50,21 @@ public class COBSReader {
                     if (validMessage) {
                         stuffed.flip();
                         if (!unstuffBytes(stuffed, unstuffed)) {
+                            System.out.println("");
                             System.err.println("Invalid Message. Message could not be unstuffed");
+                            stuffed.clear();
+                            unstuffed.clear();
+
                         } else {
                             //Utility.printBytes(unstuffed);
+                            System.out.println("");
                             validMessage = true;
                             stuffed.clear();
                             return true;
                         }
                     }
                     validMessage = true;
+                    System.out.println("");
                     stuffed.clear();
                     unstuffed.clear();
 
@@ -65,6 +72,8 @@ public class COBSReader {
 
             }
         }
+
+        //System.out.println("");
         return false;
     }
 

@@ -53,12 +53,18 @@ public class TeamMessage implements IMessage {
     }
 
     public TeamMessage(byte[] data){
-        assert data.length == 6;
+        assert data.length == 10;
 
         int i = 1;
         this.teamsId = Teams.fromByte(data[++i]);
         this.teamsActive = ((int)data[++i]) & 0xFF;
-        this.teamsPoints = ((((int) data[++i]) & 0xFF) << 8) | ((int)data[++i]) & 0xFF;
+        this.teamsPoints = data[++i];
+        this.teamsRedBalls = data[++i];
+        this.teamsBlueBalls = data[++i];
+        this.teamsGreenBalls = data[++i];
+        this.teamsPurpleBalls = data[++i];
+        this.teamsRacketBalls = data[++i];
+        this.teamsReadWrite = data[++i];
     }
 
     public Teams getTeamsId(){
