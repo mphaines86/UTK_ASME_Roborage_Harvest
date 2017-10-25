@@ -345,7 +345,7 @@ public class GraphicsInterface {
                             yellowPanel.setBackground(new Color(174, 131, 254));
                             bottomPanel.add(yellowPanel);
 
-                            yellowDisplayPoints = new JLabel("<html>Yellow Team Points: <br> 0</html>");
+                            yellowDisplayPoints = new JLabel("<html>Purple Team Points: <br> 0</html>");
                             yellowDisplayPoints.setFont(new Font("Monospace", Font.BOLD, 24));
                             yellowDisplayPoints.setForeground(Color.BLACK);
                             yellowPanel.add(yellowDisplayPoints);
@@ -755,7 +755,6 @@ public class GraphicsInterface {
                     //System.out.println(counter);
                     switch (counter%=4) {
                         case 0:
-                            System.out.println("test");
                             messageWriter.writeMessage(new TeamMessage(TeamMessage.Teams.Red_TEAM, (byte) 1,(byte) 0, (byte) 0,
                                     (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0));
                             break;
@@ -772,7 +771,14 @@ public class GraphicsInterface {
                                     (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0));
                             break;
                     }
-                    counter++;
+
+                    if (teamsActive == 2){
+                        counter+=2;
+                    }
+                    else {
+                        counter++;
+                    }
+
                     if (messageReader.getMessageReady()) {
                         byte[] data = messageReader.getMessage();
                         IMessage msg = MessageParser.parse(data);

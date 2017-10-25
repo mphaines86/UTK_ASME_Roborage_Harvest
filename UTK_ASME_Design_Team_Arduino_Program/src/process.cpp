@@ -89,7 +89,9 @@ uint8_t process_team_message(struct team_message_t *team_message, uint8_t size){
             writerSendMessage(&outputMessage);
         }
         else {
-			//Serial.println("Cool");
+            if (active) {
+                PORTC |= (1 << (team_message->team * 2 + 1));
+            }
             if ((team_message->readWrite >> 7) && 0x01) {
                 team_data[team_message->team].racketBall = team_message->racketBall;
             }
@@ -106,9 +108,9 @@ uint8_t process_team_message(struct team_message_t *team_message, uint8_t size){
                 team_data[team_message->team].redBall = team_message->redBall;
             }
             if ((team_message->readWrite >> 2) && 0x01) {
-                if (team_data[team_message->team].active)
-                    team_data[team_message->team].score = team_message->score;
+                team_data[team_message->team].score = team_message->score;
             }
+            PORTC &= ~(1 << (team_message->team*2 + 1));
         }
 
 	return 1;
@@ -124,60 +126,42 @@ void process_begin(){
 
 
 uint8_t process_start_message(struct start_message_t *start_message, uint8_t size){
-		uint8_t i;
-		uint8_t numTeams = 0;
-		if (start_message->setupBit){
-			for (i=0; i<4; i++){
-				if (start_message->teams&(1<<i)){
-                    team_data[i].active = 1;
-                    team_data[i].color = i;
-                    team_data[i].score = 0;
-                    team_data[i].readWrite = 0;
-					PORTC |= (1 << (i*2));
-                    numTeams++;
-				}
-				else{
-					team_data[i].active = 0;
-                    PORTC &= ~(1 << (i*2));
-				}
-			}
-			switch (numTeams){
-				case 2:
-				case 4: {
-					invalidTeamConfigure = false;
-					uint8_t j = 0;
-					while(j<8){
-						for (i=0; i<4; i++){
-							if(team_data[i].active){
-								poles[j].poleId = j;
-								poles[j].colorOwnership = i;
-								poles[j].isPressed = 0;
-								j++;
+    uint8_t i;
+    uint8_t numTeams = 0;
+    if (start_message->setupBit){
+        for (i=0; i<4; i++){
+            if (start_message->teams&(1<<i)){
+                team_data[i].active = 1;
+                team_data[i].color = i;
+                team_data[i].score = 0;
+                team_data[i].readWrite = 0;
+                struct message_output_t outputMessage{};
+                uint8_t body[MAX_MESSAGE_SIZE - 2];
+                body[0] = (uint8_t) (1 << (i*2));
+                writerPrepMessage(&outputMessage, 'p', body);
+                writerSendMessage(&outputMessage);
 
-							}
-						}
-					}
-					break;
-				}
-				case 3:{
-					uint8_t j = 0;
-					while(j<6){
-						for (i=0; i<4; i++){
-							if(team_data[i].active){
-								poles[j].poleId = j;
-								poles[j].colorOwnership = i;
-								poles[j].isPressed = 0;
-								j++;
-							}
-						}
-					}
-					break;
-				}
-				case 0:
-				case 1:{
-					invalidTeamConfigure = true;
-				}
-			}
+                numTeams++;
+            }
+            else{
+                team_data[i].active = 0;
+            }
+        }
+        switch (numTeams){
+            case 2:
+            case 4: {
+                invalidTeamConfigure = false;
+                break;
+            }
+            case 3:{
+                invalidTeamConfigure = false;
+                break;
+            }
+            case 0:
+            case 1:{
+                invalidTeamConfigure = true;
+            }
+        }
 	}
 
 	if (start_message->start){
@@ -185,10 +169,18 @@ uint8_t process_start_message(struct start_message_t *start_message, uint8_t siz
 				Serial.println("Invalid Team Configuration Error!");
 		}
 		else{
-			active = 1;
+            for (i=0; i<4; i++) {
+                if (team_data[i].active)
+                    PORTC |= (1 << (i * 2));
+                else
+                    PORTC &= ~(1 << (i * 2));
+
+                active = 1;
+            }
 		}
 	}
 	else{
+        PORTC = 0;
 		active = 0;
 	}
 
