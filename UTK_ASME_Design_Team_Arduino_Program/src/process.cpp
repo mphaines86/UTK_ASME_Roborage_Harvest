@@ -73,7 +73,7 @@ uint8_t process_ping_message(){
 uint8_t process_team_message(struct team_message_t *team_message, uint8_t size){
 		struct message_output_t outputMessage{};
 		uint8_t data[MAX_MESSAGE_SIZE - 2];
-		//Serial.println(team_message->team);
+		//Serial.println(team_message->readWrite);
         if (!team_message->readWrite) {
             data[1] = team_data[team_message->team].active;
             data[0] = team_data[team_message->team].color;
@@ -89,6 +89,7 @@ uint8_t process_team_message(struct team_message_t *team_message, uint8_t size){
             writerSendMessage(&outputMessage);
         }
         else {
+			//Serial.println("Cool");
             if ((team_message->readWrite >> 7) && 0x01) {
                 team_data[team_message->team].racketBall = team_message->racketBall;
             }

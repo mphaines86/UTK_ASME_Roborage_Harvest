@@ -89,13 +89,13 @@ void loop(void){
 		//Serial.println(1);
 		//message_processed(&message);
 	}
-	/*else if (read_message1(&message1)){
+	else if (read_message1(&message1)){
 		process_message(&message1);
 	}
 
 	else if (read_message2(&message2)){
 		process_message(&message2);
-	}*/
+	}
 
 
 }

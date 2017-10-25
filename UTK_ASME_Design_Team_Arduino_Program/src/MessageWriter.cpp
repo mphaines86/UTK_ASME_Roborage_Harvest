@@ -59,7 +59,7 @@ void writerPrepMessage(struct message_output_t *message, uint8_t command, uint8_
   switch (command){
     case 't':{
       message->length = 11;
-      for(int i = 0; i < 11; i++){
+      for(int i = 0; i < 9; i++){
         message->body[i] = body[i];
       }
       break;
