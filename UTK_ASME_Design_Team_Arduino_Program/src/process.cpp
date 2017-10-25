@@ -129,14 +129,16 @@ uint8_t process_start_message(struct start_message_t *start_message, uint8_t siz
 		if (start_message->setupBit){
 			for (i=0; i<4; i++){
 				if (start_message->teams&(1<<i)){
-						team_data[i].active = 1;
-						team_data[i].color = i;
-						team_data[i].score = 0;
-						team_data[i].readWrite = 0;
-						numTeams++;
+                    team_data[i].active = 1;
+                    team_data[i].color = i;
+                    team_data[i].score = 0;
+                    team_data[i].readWrite = 0;
+					PORTC |= (1 << (i*2));
+                    numTeams++;
 				}
 				else{
 					team_data[i].active = 0;
+                    PORTC &= ~(1 << (i*2));
 				}
 			}
 			switch (numTeams){
@@ -240,11 +242,11 @@ ISR(TIMER4_COMPA_vect){
     if (lightsGetFlash(i)){
       for(j=0; j<LIGHTS_PER_STRIP; j++){
         if (j <= strip_increament[i] || j >= strip_increament[i] + 8){
-          lightsSetColor(j, BLACK, i);
+            lightsSetColor(j, BLACK, i);
 
         }
         else {
-						lightsSetColor(j, (color_t)poles[i].colorOwnership, i);
+            lightsSetColor(j, (color_t)poles[i].colorOwnership, i);
         }
       }
     }

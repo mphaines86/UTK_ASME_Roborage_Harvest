@@ -6,6 +6,11 @@ color_t strip_color[] = {ORANGE, WHITE, ORANGE, WHITE, ORANGE, WHITE, ORANGE, WH
 uint8_t strip_flashing[NUMBER_OF_STRIPS];
 
 void lightsSetup(){
+
+    #if defined (__AVR_ATtiny85__)
+      if (F_CPU == 16000000) clock_prescale_set(clock_div_1);
+    #endif
+
     strip.begin();
     strip.setPin(4);
     strip.show();
@@ -114,4 +119,5 @@ void lightsSetColor(uint8_t i, color_t colour, uint8_t pin){
       break;
     }
   }
+  strip.show();
 }

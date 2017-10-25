@@ -1,6 +1,10 @@
 #ifndef LIGHTS_H_
 #define LIGHTS_H_
 
+#ifdef __AVR__
+    #include <avr/power.h>
+#endif
+
 #include <Adafruit_NeoPixel.h>
 
 #define NUMBER_OF_STRIPS 1

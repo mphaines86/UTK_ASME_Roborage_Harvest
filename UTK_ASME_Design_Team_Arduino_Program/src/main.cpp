@@ -39,12 +39,13 @@ void setup(void) {
 	Serial1.begin(115200);
 	Serial2.begin(115200);
 
-	for(uint8_t i=22; i<30; i++){
-		pinMode(i, OUTPUT);
-	}
+	//for(uint8_t i=22; i<30; i++){
+	//	pinMode(i, OUTPUT);
+	//}
 
 	for(uint8_t i =30; i<38; i++){
-		pinMode(i, INPUT_PULLUP);
+		pinMode(i, OUTPUT);
+        digitalWrite(i, LOW);
 	}
 
 	//lightsSetup();
@@ -57,7 +58,7 @@ void setup(void) {
 
 	cli();//stop interrupts
 
-	//set timer1 interrupt at 1Hz
+	/*//set timer1 interrupt at 1Hz
 	TCCR3A = 0;// set entire TCCR1A register to 0
 	TCCR3B = 0;// same for TCCR1B
 	TCNT3  = 0;//initialize counter value to 0
@@ -68,7 +69,7 @@ void setup(void) {
 	// Set CS10 and CS12 bits for 1024 prescaler
 	TCCR3B |= (1 << CS32) | (0 << CS31) | (0 << CS30);
 	// enable timer compare interrupt
-	TIMSK3 |= (1 << OCIE3A);
+	TIMSK3 |= (1 << OCIE3A);*/
 
 	/*TCCR4A = 0;
 	TCCR4B = 0;
