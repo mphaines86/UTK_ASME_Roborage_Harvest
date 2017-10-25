@@ -43,7 +43,7 @@ public class GraphicsInterface {
             greenPoints, yellowState, yellowButton, yellowPoints, redDisplayPoints, blueDisplayPoints,
             greenDisplayPoints, yellowDisplayPoints, timeDisplay;
     private boolean isConnected = false, matchStarted = false;
-    private int teamsActive = 0, matchtime = 0, matchlength = 120000, teamSelection = 0;
+    private int teamsActive = 0, matchtime = 0, matchlength = 120000, teamSelection = 0, counter = 0;
     private AudioFieldState fieldStartSound, fieldMatchSound, fieldEndSound, pestilenceSound;
 
     private final ScheduledExecutorService scheduler =
@@ -342,7 +342,7 @@ public class GraphicsInterface {
                             bottomPanel.setLayout(new GridLayout(1, teamsActive));
 
                             yellowPanel = new JPanel();
-                            yellowPanel.setBackground(new Color(254, 213, 53));
+                            yellowPanel.setBackground(new Color(174, 131, 254));
                             bottomPanel.add(yellowPanel);
 
                             yellowDisplayPoints = new JLabel("<html>Yellow Team Points: <br> 0</html>");
@@ -391,6 +391,11 @@ public class GraphicsInterface {
                             blueTeamCheckBox.setEnabled(false);
                             greenTeamCheckBox.setEnabled(false);
                             yellowTeamCheckBox.setEnabled(false);
+
+                            redTeamScore.setValue(0);
+                            blueTeamScore.setValue(0);
+                            greenTeamScore.setValue(0);
+                            yellowTeamScore.setValue(0);
 
                             messageWriter.writeMessage(new StartMessage((byte) 1, (byte) 0, (byte) teamSelection));
 
@@ -490,6 +495,16 @@ public class GraphicsInterface {
 
         redTeamScore = new JSpinner();
         statePanel.add(redTeamScore);
+        redTeamScore.addChangeListener(
+                new ChangeListener() {
+                    @Override
+                    public void stateChanged(ChangeEvent e) {
+                        if(!matchStarted){
+                            redDisplayPoints.setText("<html>Red Team Points:<br>" + redTeamScore.getValue() + "<br></html>");
+                        }
+                    }
+                }
+        );
 
         redTeamPestilence = new JButton();
         redTeamPestilence.setText("Red Team Pestilence");
@@ -514,6 +529,16 @@ public class GraphicsInterface {
 
         blueTeamScore = new JSpinner();
         statePanel.add(blueTeamScore);
+        blueTeamScore.addChangeListener(
+                new ChangeListener() {
+                    @Override
+                    public void stateChanged(ChangeEvent e) {
+                        if(!matchStarted){
+                            blueDisplayPoints.setText("<html>Blue Team Points:<br>" + blueTeamScore.getValue() + "<br></html>");
+                        }
+                    }
+                }
+        );
 
         blueTeamPestilence = new JButton();
         blueTeamPestilence.setText("Blue Team Pestilence");
@@ -524,6 +549,9 @@ public class GraphicsInterface {
                     public void actionPerformed(ActionEvent e) {
                         pestilenceSound = new AudioFieldState();
                         pestilenceSound.pestilenceSound();
+                        blueTeamScore.setValue((Integer) blueTeamScore.getValue() - 10);
+                        messageWriter.writeMessage(new TeamMessage(TeamMessage.Teams.BLUE_TEAM, 1, ((Integer) blueTeamScore.getValue()).byteValue(),
+                                0, 0, 0, 0, 0, 0x04));
                         //messageWriter.writeMessage();
                     }
                 }
@@ -535,6 +563,16 @@ public class GraphicsInterface {
 
         greenTeamScore = new JSpinner();
         statePanel.add(greenTeamScore);
+        greenTeamScore.addChangeListener(
+                new ChangeListener() {
+                    @Override
+                    public void stateChanged(ChangeEvent e) {
+                        if(!matchStarted){
+                            greenDisplayPoints.setText("<html>Green Team Points:<br>" + greenTeamScore.getValue() + "<br></html>");
+                        }
+                    }
+                }
+        );
 
         greenTeamPestilence = new JButton();
         greenTeamPestilence.setText("Green Team Pestilence");
@@ -545,6 +583,9 @@ public class GraphicsInterface {
                     public void actionPerformed(ActionEvent e) {
                         pestilenceSound = new AudioFieldState();
                         pestilenceSound.pestilenceSound();
+                        greenTeamScore.setValue((Integer) greenTeamScore.getValue() - 10);
+                        messageWriter.writeMessage(new TeamMessage(TeamMessage.Teams.GREEN_TEAM, 1, ((Integer) greenTeamScore.getValue()).byteValue(),
+                                0, 0, 0, 0, 0, 0x04));
                         //messageWriter.writeMessage();
                     }
                 }
@@ -556,6 +597,16 @@ public class GraphicsInterface {
 
         yellowTeamScore = new JSpinner();
         statePanel.add(yellowTeamScore);
+        yellowTeamScore.addChangeListener(
+                new ChangeListener() {
+                    @Override
+                    public void stateChanged(ChangeEvent e) {
+                        if(!matchStarted){
+                            yellowDisplayPoints.setText("<html>Purple Team Points:<br>" + yellowTeamScore.getValue() + "<br></html>");
+                        }
+                    }
+                }
+        );
 
         yellowTeamPestilence = new JButton();
         yellowTeamPestilence.setText("Purple Team Pestilence");
@@ -566,6 +617,9 @@ public class GraphicsInterface {
                     public void actionPerformed(ActionEvent e) {
                         pestilenceSound = new AudioFieldState();
                         pestilenceSound.pestilenceSound();
+                        yellowTeamScore.setValue((Integer) yellowTeamScore.getValue() - 10);
+                        messageWriter.writeMessage(new TeamMessage(TeamMessage.Teams.YELLOW_TEAM, 1, ((Integer) yellowTeamScore.getValue()).byteValue(),
+                                0, 0, 0, 0, 0, 0x04));
                         //messageWriter.writeMessage();
                     }
                 }
@@ -576,7 +630,7 @@ public class GraphicsInterface {
                 JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
         //console.setWrapStyleWord(true);
         console.setEditable(false);
-        console.setForeground(new Color(230, 89, 51));
+        console.setForeground(new Color(230, 41, 0));
         c.fill = GridBagConstraints.BOTH;
         c.anchor = GridBagConstraints.PAGE_END;
         c.weighty = 1;
@@ -637,8 +691,6 @@ public class GraphicsInterface {
         scoreFrame.setLayout(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
 
-
-
         topPanel = new JPanel();
         topPanel.setLayout(new GridBagLayout());
         c.fill = GridBagConstraints.BOTH;
@@ -686,11 +738,9 @@ public class GraphicsInterface {
 
 
     private void updateDashboard(){
-
         final Runnable dashboardUpdate = new Runnable() {
             @Override
-            public void run() {
-
+            public void run(){
                 if(!matchStarted) {
                     try {
                         //System.out.println("sleeping");
@@ -702,8 +752,27 @@ public class GraphicsInterface {
                 else {
                     //System.out.println("printing");
                     //messageWriter.writeMessage(new PingMessage(1));
-                    messageWriter.writeMessage(new TeamMessage(TeamMessage.Teams.Red_TEAM, (byte) 1,(byte) 0, (byte) 0,
-                            (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0));
+                    //System.out.println(counter);
+                    switch (counter%=4) {
+                        case 0:
+                            System.out.println("test");
+                            messageWriter.writeMessage(new TeamMessage(TeamMessage.Teams.Red_TEAM, (byte) 1,(byte) 0, (byte) 0,
+                                    (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0));
+                            break;
+                        case 1:
+                            messageWriter.writeMessage(new TeamMessage(TeamMessage.Teams.BLUE_TEAM, (byte) 1,(byte) 0, (byte) 0,
+                                    (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0));
+                            break;
+                        case 2:
+                            messageWriter.writeMessage(new TeamMessage(TeamMessage.Teams.GREEN_TEAM, (byte) 1,(byte) 0, (byte) 0,
+                                    (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0));
+                            break;
+                        case 3:
+                            messageWriter.writeMessage(new TeamMessage(TeamMessage.Teams.YELLOW_TEAM, (byte) 1,(byte) 0, (byte) 0,
+                                    (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0));
+                            break;
+                    }
+                    counter++;
                     if (messageReader.getMessageReady()) {
                         byte[] data = messageReader.getMessage();
                         IMessage msg = MessageParser.parse(data);
@@ -714,38 +783,20 @@ public class GraphicsInterface {
                         if (msg instanceof TeamMessage){
                             switch (((TeamMessage) msg).getTeamsId().getValue()){
                                 case 0:
-                                    System.out.println("Update Red Team");
-                                    //redButton.setText(String.format("Team Red Button State: %d",
-                                    //        ((TeamMessage) msg).getTeamsActive()));
-                                    //redPoints.setText(String.format("Team Red Points: %d",
-                                    //        ((TeamMessage) msg).getTeamsPoints()));
-                                    System.out.println(String.valueOf(((TeamMessage) msg).getTeamsPoints()));
-                                    //redTeamScore.setValue(String.valueOf(((TeamMessage) msg).getTeamsPoints()));
-                                    //redDisplayPoints.setText("<html>Red Team Points:<br>" + redTeamScore.getValue() + "<br></html>");
-                                    System.out.println("Finish Update");
+                                    redTeamScore.setValue(((TeamMessage) msg).getTeamsPoints());
+                                    redDisplayPoints.setText("<html>Red Team Points:<br>" + String.valueOf(((TeamMessage) msg).getTeamsPoints()) + "<br></html>");
                                     break;
                                 case 1:
-                                    blueButton.setText(String.format("Team Blue Button State: %d",
-                                            ((TeamMessage) msg).getTeamsActive()));
-                                    bluePoints.setText(String.format("Team Blue Points: %d",
-                                            ((TeamMessage) msg).getTeamsPoints()));
-                                    blueDisplayPoints.setText("<html>Blue Team Points:<br>" + String.valueOf(((TeamMessage) msg).getTeamsPoints() + "</html>"));
+                                    blueTeamScore.setValue(((TeamMessage) msg).getTeamsPoints());
+                                    blueDisplayPoints.setText("<html>Blue Team Points:<br>" + String.valueOf(((TeamMessage) msg).getTeamsPoints()) + "<br></html>");
                                     break;
                                 case 2:
-                                    greenButton.setText(String.format("Team Green Button State: %d",
-                                            ((TeamMessage) msg).getTeamsActive()));
-                                    greenPoints.setText(String.format("Team Green Points: %d",
-                                            ((TeamMessage) msg).getTeamsPoints()));
-                                    greenDisplayPoints.setText(String.format("\"<html>Yellow Team Points: <br> %d</html>\"",
-                                            ((TeamMessage) msg).getTeamsPoints()));
+                                    greenTeamScore.setValue(((TeamMessage) msg).getTeamsPoints());
+                                    greenDisplayPoints.setText("<html>Green Team Points:<br>" + String.valueOf(((TeamMessage) msg).getTeamsPoints()) + "<br></html>");
                                     break;
                                 case 3:
-                                    yellowButton.setText(String.format("Team Yellow Button State: %d",
-                                            ((TeamMessage) msg).getTeamsActive()));
-                                    yellowPoints.setText(String.format("Team Yellow Points: %d",
-                                            ((TeamMessage) msg).getTeamsPoints()));
-                                    yellowDisplayPoints.setText(String.format("\"<html>Yellow Team Points: <br> %d</html>\"",
-                                            ((TeamMessage) msg).getTeamsPoints()));
+                                    yellowTeamScore.setValue(((TeamMessage) msg).getTeamsPoints());
+                                    yellowDisplayPoints.setText("<html>Purple Team Points:<br>" + String.valueOf(((TeamMessage) msg).getTeamsPoints()) + "<br></html>");
                                     break;
                             }
                         }

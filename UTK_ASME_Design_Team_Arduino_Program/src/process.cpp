@@ -74,7 +74,7 @@ uint8_t process_team_message(struct team_message_t *team_message, uint8_t size){
 		struct message_output_t outputMessage{};
 		uint8_t data[MAX_MESSAGE_SIZE - 2];
 		//Serial.println(team_message->team);
-        if (!team_data[team_message->team].readWrite) {
+        if (!team_message->readWrite) {
             data[1] = team_data[team_message->team].active;
             data[0] = team_data[team_message->team].color;
             //uint16touint8(team_data[team_message->team].score, data, 2);
@@ -85,34 +85,31 @@ uint8_t process_team_message(struct team_message_t *team_message, uint8_t size){
             data[6] = team_data[team_message->team].purpleBall;
             data[7] = team_data[team_message->team].racketBall;
 			data[8] = team_data[team_message->team].readWrite;
-            //writerPrepMessage(&outputMessage, 't', data);
-            //writerSendMessage(&outputMessage);
+            writerPrepMessage(&outputMessage, 't', data);
+            writerSendMessage(&outputMessage);
         }
-        else{
-            if(team_message->readWrite >> 7){
+        else {
+            if ((team_message->readWrite >> 7) && 0x01) {
                 team_data[team_message->team].racketBall = team_message->racketBall;
             }
-            if(team_message->readWrite >> 6){
+            if ((team_message->readWrite >> 6) && 0x01) {
                 team_data[team_message->team].purpleBall = team_message->purpleBall;
             }
-            if(team_message->readWrite >> 5){
+            if ((team_message->readWrite >> 5) && 0x01) {
                 team_data[team_message->team].blueBall = team_message->blueBall;
             }
-            if(team_message->readWrite >> 4){
+            if ((team_message->readWrite >> 4) && 0x01) {
                 team_data[team_message->team].greenBall = team_message->greenBall;
             }
-            if(team_message->readWrite >> 3){
+            if ((team_message->readWrite >> 3) && 0x01) {
                 team_data[team_message->team].redBall = team_message->redBall;
             }
-            if(team_message->readWrite >> 2){
-                team_data[team_message->team].score = team_message->score;
+            if ((team_message->readWrite >> 2) && 0x01) {
+                if (team_data[team_message->team].active)
+                    team_data[team_message->team].score = team_message->score;
             }
         }
-        struct message_output_t testOutputMessage{};
-        uint8_t testData[MAX_MESSAGE_SIZE - 2];
-        data[0] = team_message->readWrite;
-        writerPrepMessage(&testOutputMessage, 'p', testData);
-        writerSendMessage(&testOutputMessage);
+
 	return 1;
 }
 
