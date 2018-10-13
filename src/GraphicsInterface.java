@@ -138,10 +138,12 @@ public class GraphicsInterface {
                             comm.setPortname(comboCommPorts.getSelectedItem().toString());
                             comm.initialize();
                             comm.portConnect();
+
                             messageReader = new MessageReader(comm.getInput());
                             (new Thread (messageReader)).start();
                             messageWriter = new MessageWriter(comm.getOutput());
                             (new Thread (messageWriter)).start();
+
                             messageReader.setClose(false);
                             messageWriter.setClose(false);
                             activateButton.setText("Disconnect");
@@ -499,9 +501,11 @@ public class GraphicsInterface {
                 new ChangeListener() {
                     @Override
                     public void stateChanged(ChangeEvent e) {
-                        if(!matchStarted){
+                        //if(!matchStarted){
                             redDisplayPoints.setText("<html>Red Team Points:<br>" + redTeamScore.getValue() + "<br></html>");
-                        }
+                            messageWriter.writeMessage(new TeamMessage(TeamMessage.Teams.Red_TEAM, 1, ((Integer) redTeamScore.getValue()).byteValue(),
+                                    0, 0, 0, 0, 0, 0x04));
+                        //}
                     }
                 }
         );
@@ -515,7 +519,7 @@ public class GraphicsInterface {
                     public void actionPerformed(ActionEvent e) {
                         pestilenceSound = new AudioFieldState();
                         pestilenceSound.pestilenceSound();
-                        redTeamScore.setValue((Integer) redTeamScore.getValue() - 10);
+                        redTeamScore.setValue((Integer) redTeamScore.getValue() - 20);
                         messageWriter.writeMessage(new TeamMessage(TeamMessage.Teams.Red_TEAM, 1, ((Integer) redTeamScore.getValue()).byteValue(),
                                 0, 0, 0, 0, 0, 0x04));
 
@@ -533,9 +537,11 @@ public class GraphicsInterface {
                 new ChangeListener() {
                     @Override
                     public void stateChanged(ChangeEvent e) {
-                        if(!matchStarted){
+                        //if(!matchStarted){
                             blueDisplayPoints.setText("<html>Blue Team Points:<br>" + blueTeamScore.getValue() + "<br></html>");
-                        }
+                            messageWriter.writeMessage(new TeamMessage(TeamMessage.Teams.BLUE_TEAM, 1, ((Integer) blueTeamScore.getValue()).byteValue(),
+                                    0, 0, 0, 0, 0, 0x04));
+                        //}
                     }
                 }
         );
@@ -549,7 +555,7 @@ public class GraphicsInterface {
                     public void actionPerformed(ActionEvent e) {
                         pestilenceSound = new AudioFieldState();
                         pestilenceSound.pestilenceSound();
-                        blueTeamScore.setValue((Integer) blueTeamScore.getValue() - 10);
+                        blueTeamScore.setValue((Integer) blueTeamScore.getValue() - 20);
                         messageWriter.writeMessage(new TeamMessage(TeamMessage.Teams.BLUE_TEAM, 1, ((Integer) blueTeamScore.getValue()).byteValue(),
                                 0, 0, 0, 0, 0, 0x04));
                         //messageWriter.writeMessage();
@@ -567,9 +573,11 @@ public class GraphicsInterface {
                 new ChangeListener() {
                     @Override
                     public void stateChanged(ChangeEvent e) {
-                        if(!matchStarted){
+                        //if(!matchStarted){
                             greenDisplayPoints.setText("<html>Green Team Points:<br>" + greenTeamScore.getValue() + "<br></html>");
-                        }
+                            messageWriter.writeMessage(new TeamMessage(TeamMessage.Teams.GREEN_TEAM, 1, ((Integer) greenTeamScore.getValue()).byteValue(),
+                                    0, 0, 0, 0, 0, 0x04));
+                        //}
                     }
                 }
         );
@@ -583,7 +591,7 @@ public class GraphicsInterface {
                     public void actionPerformed(ActionEvent e) {
                         pestilenceSound = new AudioFieldState();
                         pestilenceSound.pestilenceSound();
-                        greenTeamScore.setValue((Integer) greenTeamScore.getValue() - 10);
+                        greenTeamScore.setValue((Integer) greenTeamScore.getValue() - 20);
                         messageWriter.writeMessage(new TeamMessage(TeamMessage.Teams.GREEN_TEAM, 1, ((Integer) greenTeamScore.getValue()).byteValue(),
                                 0, 0, 0, 0, 0, 0x04));
                         //messageWriter.writeMessage();
@@ -601,9 +609,11 @@ public class GraphicsInterface {
                 new ChangeListener() {
                     @Override
                     public void stateChanged(ChangeEvent e) {
-                        if(!matchStarted){
+                        //if(!matchStarted){
                             yellowDisplayPoints.setText("<html>Purple Team Points:<br>" + yellowTeamScore.getValue() + "<br></html>");
-                        }
+                            messageWriter.writeMessage(new TeamMessage(TeamMessage.Teams.YELLOW_TEAM, 1, ((Integer) yellowTeamScore.getValue()).byteValue(),
+                                    0, 0, 0, 0, 0, 0x04));
+                        //}
                     }
                 }
         );
@@ -617,7 +627,7 @@ public class GraphicsInterface {
                     public void actionPerformed(ActionEvent e) {
                         pestilenceSound = new AudioFieldState();
                         pestilenceSound.pestilenceSound();
-                        yellowTeamScore.setValue((Integer) yellowTeamScore.getValue() - 10);
+                        yellowTeamScore.setValue((Integer) yellowTeamScore.getValue() - 20);
                         messageWriter.writeMessage(new TeamMessage(TeamMessage.Teams.YELLOW_TEAM, 1, ((Integer) yellowTeamScore.getValue()).byteValue(),
                                 0, 0, 0, 0, 0, 0x04));
                         //messageWriter.writeMessage();

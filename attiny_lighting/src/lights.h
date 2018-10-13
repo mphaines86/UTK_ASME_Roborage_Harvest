@@ -18,7 +18,7 @@ typedef enum {
   ORANGE,
   WHITE,
   GREY,
-  BLACK,
+  PURPLE,
 } color_t;
 
 
