@@ -54,16 +54,17 @@ void loop(void){
 
 
     if (pinValue == 1 && pinValue != flagBit){
-        lightsSetColor(BLUE, 4);
+        lightsSetColor(PURPLE, 4);
         flagBit = pinValue;
     }
     else if (pinValue == 3 && pinValue != flagBit){
-        uint8_t currentPin = 0;
-        while (currentPin < 30){
-            lightsSetColor(currentPin, WHITE, 4);
-            delay(100);
-            lightsSetColor(currentPin, BLUE, 4);
-            currentPin++;
+        uint8_t currentFlash = 0;
+        while (currentFlash < 3){
+            lightsSetColor(WHITE, 4);
+            delay(300);
+            lightsSetColor(PURPLE, 4);
+            delay(300);
+            currentFlash++;
         }
         flagBit = pinValue;
     }

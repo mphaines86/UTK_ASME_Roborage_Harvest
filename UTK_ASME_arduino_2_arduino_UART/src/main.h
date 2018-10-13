@@ -6,10 +6,10 @@
 #define UTK_ASME_ARDUINO_2_ARDUINO_UART_MAIN_H
 
 typedef enum{
-    RED_TEAM,
-    BLUE_TEAM,
     GREEN_TEAM,
     YELLOW_TEAM,
+    RED_TEAM,
+    BLUE_TEAM,
     NUM_TEAMS,
 } teams_t;
 

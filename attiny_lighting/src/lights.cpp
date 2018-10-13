@@ -38,17 +38,17 @@ void lightsSetColor(color_t colour, uint8_t pin){
   switch (colour){
     case RED: {
       for(uint8_t i = 0; i<30; i++)
-        strip.setPixelColor(i, 141, 32, 72);
+        strip.setPixelColor(i, 255, 0, 0);
       break;
     }
     case BLUE: {
       for(uint8_t i = 0; i<30; i++)
-        strip.setPixelColor(i, 0, 108, 147);
+        strip.setPixelColor(i, 0, 0, 255);
       break;
     }
     case GREEN: {
       for(uint8_t i = 0; i<30; i++)
-        strip.setPixelColor(i, 0, 116, 111);
+        strip.setPixelColor(i, 0, 255, 0);
       break;
     }
     case YELLOW: {
@@ -71,9 +71,9 @@ void lightsSetColor(color_t colour, uint8_t pin){
         strip.setPixelColor(i, 88, 89, 91);
       break;
     }
-    case BLACK: {
+    case PURPLE: {
       for(uint8_t i = 0; i<30; i++)
-        strip.setPixelColor(i, 0, 0, 0);
+        strip.setPixelColor(i, 207, 151, 244);
       break;
     }
   }
@@ -87,11 +87,11 @@ void lightsSetColor(uint8_t i, color_t colour, uint8_t pin){
 
   switch (colour){
     case RED: {
-      strip.setPixelColor(i, 141, 32, 72);
+      strip.setPixelColor(i, 255, 0, 0);
       break;
       }
     case BLUE: {
-      strip.setPixelColor(i, 0, 108, 147);
+      strip.setPixelColor(i, 0, 0, 255);
       break;
     }
     case GREEN: {
@@ -114,8 +114,8 @@ void lightsSetColor(uint8_t i, color_t colour, uint8_t pin){
       strip.setPixelColor(i, 88, 89, 91);
       break;
     }
-    case BLACK: {
-      strip.setPixelColor(i, 0, 0, 0);
+    case PURPLE: {
+      strip.setPixelColor(i, 207, 140, 244);
       break;
     }
   }
