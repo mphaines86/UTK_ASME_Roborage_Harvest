@@ -58,13 +58,22 @@ public class AudioFieldState {
         startup.playSound();
     }
 
+    public void abortSound(){
+        startup = new AudioPlayback(System.getProperty("user.dir") + "/src/audio/nr_name25.dsp.wav");
+        startup.playSound();
+    }
+
     public void pestilenceSound(){
         startup = new AudioPlayback(System.getProperty("user.dir") + "/src/audio/Deception Horn.mp3");
         startup.playSound();
     }
 
-    public void fadeSound(){
-        startup.fadeSound();
+    public void fadeOutSound(){
+        startup.fadeOutSound();
+    }
+
+    public void fadeInSound(){
+        startup.fadeInSound();
     }
     public void killSounds(){
         startup.stopSound();

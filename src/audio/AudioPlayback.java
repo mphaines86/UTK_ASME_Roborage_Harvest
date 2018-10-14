@@ -33,7 +33,7 @@ public class AudioPlayback{
         mediaPlayer.stop();
     }
 
-    public void fadeSound(){
+    public void fadeOutSound(){
 
         double volume = 1;
 
@@ -53,6 +53,32 @@ public class AudioPlayback{
                 else{
                     //System.out.println(volume-=.0025);
                     mediaPlayer.setVolume(volume-=.0025);
+                }
+            }
+        }, 0, 10);
+
+    }
+
+    public void fadeInSound(){
+
+        double volume = 1;
+
+        final Timer timer = new Timer();
+
+        timer.scheduleAtFixedRate(new TimerTask() {
+
+            double volume = 1;
+
+            @Override
+            public void run() {
+                if (volume <= 0){
+                    stopSound();
+                    timer.cancel();
+                    timer.purge();
+                }
+                else{
+                    //System.out.println(volume-=.0025);
+                    mediaPlayer.setVolume(volume+=.0025);
                 }
             }
         }, 0, 10);

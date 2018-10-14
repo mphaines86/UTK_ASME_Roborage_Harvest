@@ -27,23 +27,26 @@ import java.util.concurrent.*;
 public class GraphicsInterface {
 
     private JFrame mainFrame, scoreFrame;
-    private JPanel statePanel, controlPanel, timePanel, topPanel, bottomPanel, redPanel, bluePanel, greenPanel,
+    private JPanel statePanel, controlPanel, timePanel, topPanel, bracketPanel, teamPanel, coverPanel, bottomPanel, redPanel, bluePanel, greenPanel,
             yellowPanel;
 
+    private JPanelWithBackground picturePanelWithBackground;
     private serialComm comm;
     private MessageWriter messageWriter;
     private MessageReader messageReader;
-    private JComboBox comboCommPorts;
+    private JComboBox comboCommPorts, redTeamNameBox, blueTeamNameBox, greenTeamNameBox, yellowTeamNameBox;
     private JTextArea console;
+    private JTextField textField1, textField2, textField3, textField4, textField5, textField6, textField7, textField8,
+            textField9, textField10, textField11, textField12, textField13, textField14, textField15, textField16;
     private JSpinner redTeamScore, blueTeamScore, greenTeamScore, yellowTeamScore;
-    private JCheckBox redTeamCheckBox, blueTeamCheckBox, greenTeamCheckBox, yellowTeamCheckBox;
+    private JCheckBox redTeamCheckBox, blueTeamCheckBox, greenTeamCheckBox, yellowTeamCheckBox, pointsCheckBox;
 
-    private JButton activateButton, startMatchButton, redTeamPestilence, blueTeamPestilence, greenTeamPestilence, yellowTeamPestilence;;
+    private JButton activateButton, startMatchButton, redTeamPestilence, blueTeamPestilence, greenTeamPestilence, yellowTeamPestilence;
     private JLabel gameTime, redState, redButton, redPoints, blueState, blueButton, bluePoints, greenState, greenButton,
             greenPoints, yellowState, yellowButton, yellowPoints, redDisplayPoints, blueDisplayPoints,
-            greenDisplayPoints, yellowDisplayPoints, timeDisplay;
+            greenDisplayPoints, yellowDisplayPoints, timeDisplay, backgroundLabel;
     private boolean isConnected = false, matchStarted = false;
-    private int teamsActive = 0, matchtime = 0, matchlength = 120000, teamSelection = 0, counter = 0;
+    private int teamsActive = 0, matchtime = 0, matchlength = 180000, teamSelection = 0, counter = 0;
     private AudioFieldState fieldStartSound, fieldMatchSound, fieldEndSound, pestilenceSound;
 
     private final ScheduledExecutorService scheduler =
@@ -75,6 +78,8 @@ public class GraphicsInterface {
     }
 
     public void createGraphicInterface(){
+
+        teamNameLoader teams = new teamNameLoader();
 
         try {
             // Set System L&F
@@ -189,11 +194,12 @@ public class GraphicsInterface {
                             bottomPanel.setLayout(new GridLayout(1, teamsActive));
 
                             redPanel = new JPanel();
+                            redPanel.setLayout(new GridBagLayout());
                             redPanel.setBackground(new Color(196, 27, 22));
                             bottomPanel.add(redPanel);
 
-                            redDisplayPoints = new JLabel("<html>Red Team Points: <br> 0</html>");
-                            redDisplayPoints.setFont(new Font("Monospace", Font.BOLD, 24));
+                            redDisplayPoints = new JLabel("<html>Red Team</html>");
+                            redDisplayPoints.setFont(new Font("Papyrus", Font.BOLD, 30));
                             redDisplayPoints.setForeground(Color.BLACK);
                             redPanel.add(redDisplayPoints);
 
@@ -242,11 +248,12 @@ public class GraphicsInterface {
                             bottomPanel.setLayout(new GridLayout(1, teamsActive));
 
                             bluePanel = new JPanel();
+                            bluePanel.setLayout(new GridBagLayout());
                             bluePanel.setBackground(new Color(0, 108, 147));
                             bottomPanel.add(bluePanel);
 
-                            blueDisplayPoints = new JLabel("<html>Blue Team Points: <br> 0</html>");
-                            blueDisplayPoints.setFont(new Font("Monospace", Font.BOLD, 24));
+                            blueDisplayPoints = new JLabel("<html>Blue Team</html>");
+                            blueDisplayPoints.setFont(new Font("Papyrus", Font.BOLD, 30));
                             blueDisplayPoints.setForeground(Color.BLACK);
                             bluePanel.add(blueDisplayPoints);
 
@@ -295,11 +302,12 @@ public class GraphicsInterface {
 
 
                             greenPanel = new JPanel();
+                            greenPanel.setLayout(new GridBagLayout());
                             greenPanel.setBackground(new Color(0, 116, 111));
                             bottomPanel.add(greenPanel);
 
-                            greenDisplayPoints = new JLabel("<html>Green Team Points: <br> 0</html>");
-                            greenDisplayPoints.setFont(new Font("Monospace", Font.BOLD, 24));
+                            greenDisplayPoints = new JLabel("<html>Green Team</html>");
+                            greenDisplayPoints.setFont(new Font("Papyrus", Font.BOLD, 30));
                             greenDisplayPoints.setForeground(Color.BLACK);
                             greenPanel.add(greenDisplayPoints);
 
@@ -344,11 +352,12 @@ public class GraphicsInterface {
                             bottomPanel.setLayout(new GridLayout(1, teamsActive));
 
                             yellowPanel = new JPanel();
+                            yellowPanel.setLayout(new GridBagLayout());
                             yellowPanel.setBackground(new Color(174, 131, 254));
                             bottomPanel.add(yellowPanel);
 
-                            yellowDisplayPoints = new JLabel("<html>Purple Team Points: <br> 0</html>");
-                            yellowDisplayPoints.setFont(new Font("Monospace", Font.BOLD, 24));
+                            yellowDisplayPoints = new JLabel("<html>Purple Team</html>");
+                            yellowDisplayPoints.setFont(new Font("Papyrus", Font.BOLD, 30));
                             yellowDisplayPoints.setForeground(Color.BLACK);
                             yellowPanel.add(yellowDisplayPoints);
 
@@ -377,6 +386,40 @@ public class GraphicsInterface {
                 }
         );
         controlPanel.add(yellowTeamCheckBox);
+
+        pointsCheckBox = new JCheckBox();
+        pointsCheckBox.setText("No Points");
+        pointsCheckBox.addActionListener(
+                new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        if (pointsCheckBox.isSelected()){
+                            redTeamScore.setEnabled(false);
+                            blueTeamScore.setEnabled(false);
+                            greenTeamScore.setEnabled(false);
+                            yellowTeamScore.setEnabled(false);
+
+                            redTeamPestilence.setEnabled(false);
+                            blueTeamPestilence.setEnabled(false);
+                            greenTeamPestilence.setEnabled(false);
+                            yellowTeamPestilence.setEnabled(false);
+                        }
+                        else {
+                            redTeamScore.setEnabled(true);
+                            blueTeamScore.setEnabled(true);
+                            greenTeamScore.setEnabled(true);
+                            yellowTeamScore.setEnabled(true);
+
+                            redTeamPestilence.setEnabled(true);
+                            blueTeamPestilence.setEnabled(true);
+                            greenTeamPestilence.setEnabled(true);
+                            yellowTeamPestilence.setEnabled(true);
+
+                        }
+                    }
+                }
+        );
+        controlPanel.add(pointsCheckBox);
 
         startMatchButton = new JButton();
         startMatchButton.setText("Start Match");
@@ -435,7 +478,7 @@ public class GraphicsInterface {
                                         if (timeleft <= 0) {
                                             fieldEndSound = new AudioFieldState();
                                             fieldEndSound.endSound();
-                                            fieldMatchSound.fadeSound();
+                                            fieldMatchSound.fadeOutSound();
                                             matchStarted = false;
 
                                             redTeamCheckBox.setEnabled(true);
@@ -463,7 +506,10 @@ public class GraphicsInterface {
                         else{
                             matchStarted = false;
                             System.out.println("Match is Aborting!");
-                            fieldMatchSound.killSounds();
+                            //fieldMatchSound.killSounds();
+                            fieldEndSound = new AudioFieldState();
+                            fieldEndSound.abortSound();
+                            fieldMatchSound.fadeOutSound();
                             messageWriter.writeMessage(new StartMessage((byte) 0, (byte) 1, (byte) 0));
                             matchtime = 120000;
                             startMatchButton.setText("Start Match");
@@ -484,7 +530,7 @@ public class GraphicsInterface {
         controlPanel.add(startMatchButton);
 
         statePanel = new JPanel();
-        statePanel.setLayout(new GridLayout(4,3));
+        statePanel.setLayout(new GridBagLayout());
         //c.fill = GridBagConstraints.HORIZONTAL;
         c.gridwidth = GridBagConstraints.RELATIVE;
         c.gridy = 2;
@@ -492,11 +538,20 @@ public class GraphicsInterface {
         mainFrame.add(statePanel, c);
 
         redState = new JLabel();
-        redState.setText("Red Team Score:");
-        statePanel.add(redState);
+        redState.setText("Red Team Active:");
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridwidth = 1;
+        c.gridy = 0;
+        c.gridy = 0;
+        c.insets = new Insets(0, 0, 0, 0);
+        c.ipadx = 50;
+        c.ipady = 2;
+        statePanel.add(redState, c);
 
         redTeamScore = new JSpinner();
-        statePanel.add(redTeamScore);
+        c.gridy = 0;
+        c.gridx = 2;
+        statePanel.add(redTeamScore, c);
         redTeamScore.addChangeListener(
                 new ChangeListener() {
                     @Override
@@ -512,7 +567,8 @@ public class GraphicsInterface {
 
         redTeamPestilence = new JButton();
         redTeamPestilence.setText("Red Team Pestilence");
-        statePanel.add(redTeamPestilence);
+        c.gridx = 3;
+        statePanel.add(redTeamPestilence, c);
         redTeamPestilence.addActionListener(
                 new ActionListener() {
                     @Override
@@ -527,12 +583,36 @@ public class GraphicsInterface {
                 }
         );
 
+        redTeamNameBox = new JComboBox(teams.getTeamName().toArray());
+        c.gridx = 4;
+        statePanel.add(redTeamNameBox, c);
+        redTeamNameBox.addActionListener(
+                new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        String displayText = "<html><b>Team Name:</b> &emsp &#160 " + teams.getTeamName(redTeamNameBox.getSelectedIndex())
+                                +"<br>School Name: &emsp " + teams.getSchoolName(redTeamNameBox.getSelectedIndex())
+                                +"<br>Robot Name: &emsp &#160 " + teams.getRobotName(redTeamNameBox.getSelectedIndex())
+                                +"<br>Robot Weight: &emsp " + teams.getRobotWeight(redTeamNameBox.getSelectedIndex());
+                        if (!pointsCheckBox.isSelected()){
+                            displayText+= "<br>Points: &emsp &emsp &emsp &emsp " + redTeamScore.getValue() + "<br></html>";
+                        }
+                        else
+                            displayText+="</html>";
+                        redDisplayPoints.setText(displayText);
+                    }
+                }
+        );
+
         blueState = new JLabel();
         blueState.setText("Blue Team Score:");
-        statePanel.add(blueState);
+        c.gridy = 1;
+        c.gridx = 0;
+        statePanel.add(blueState, c);
 
         blueTeamScore = new JSpinner();
-        statePanel.add(blueTeamScore);
+        c.gridx = 2;
+        statePanel.add(blueTeamScore, c);
         blueTeamScore.addChangeListener(
                 new ChangeListener() {
                     @Override
@@ -548,7 +628,8 @@ public class GraphicsInterface {
 
         blueTeamPestilence = new JButton();
         blueTeamPestilence.setText("Blue Team Pestilence");
-        statePanel.add(blueTeamPestilence);
+        c.gridx = 3;
+        statePanel.add(blueTeamPestilence, c);
         blueTeamPestilence.addActionListener(
                 new ActionListener() {
                     @Override
@@ -563,12 +644,36 @@ public class GraphicsInterface {
                 }
         );
 
+        blueTeamNameBox = new JComboBox(teams.getTeamName().toArray());
+        c.gridx = 4;
+        statePanel.add(blueTeamNameBox, c);
+        blueTeamNameBox.addActionListener(
+                new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        String displayText = "<html><b>Team Name:</b> &emsp &#160 " + teams.getTeamName(blueTeamNameBox.getSelectedIndex())
+                                +"<br>School Name: &emsp " + teams.getSchoolName(blueTeamNameBox.getSelectedIndex())
+                                +"<br>Robot Name: &emsp &#160 " + teams.getRobotName(blueTeamNameBox.getSelectedIndex())
+                                +"<br>Robot Weight: &emsp " + teams.getRobotWeight(blueTeamNameBox.getSelectedIndex());
+                        if (!pointsCheckBox.isSelected()){
+                            displayText+= "<br>Points: &emsp &emsp &emsp &emsp " + blueTeamScore.getValue() + "<br></html>";
+                        }
+                        else
+                            displayText+="</html>";
+                        blueDisplayPoints.setText(displayText);
+                    }
+                }
+        );
+
         greenState = new JLabel();
         greenState.setText("Green Team Score:");
-        statePanel.add(greenState);
+        c.gridy = 2;
+        c.gridx = 0;
+        statePanel.add(greenState, c);
 
         greenTeamScore = new JSpinner();
-        statePanel.add(greenTeamScore);
+        c.gridx = 2;
+        statePanel.add(greenTeamScore, c);
         greenTeamScore.addChangeListener(
                 new ChangeListener() {
                     @Override
@@ -584,7 +689,8 @@ public class GraphicsInterface {
 
         greenTeamPestilence = new JButton();
         greenTeamPestilence.setText("Green Team Pestilence");
-        statePanel.add(greenTeamPestilence);
+        c.gridx = 3;
+        statePanel.add(greenTeamPestilence, c);
         greenTeamPestilence.addActionListener(
                 new ActionListener() {
                     @Override
@@ -599,12 +705,36 @@ public class GraphicsInterface {
                 }
         );
 
+        greenTeamNameBox = new JComboBox(teams.getTeamName().toArray());
+        c.gridx = 4;
+        statePanel.add(greenTeamNameBox, c);
+        greenTeamNameBox.addActionListener(
+                new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        String displayText = "<html><b>Team Name:</b> &emsp &#160 " + teams.getTeamName(greenTeamNameBox.getSelectedIndex())
+                                +"<br>School Name: &emsp " + teams.getSchoolName(greenTeamNameBox.getSelectedIndex())
+                                +"<br>Robot Name: &emsp &#160 " + teams.getRobotName(greenTeamNameBox.getSelectedIndex())
+                                +"<br>Robot Weight: &emsp " + teams.getRobotWeight(greenTeamNameBox.getSelectedIndex());
+                        if (!pointsCheckBox.isSelected()){
+                            displayText+= "<br>Points: &emsp &emsp &emsp &emsp " + greenTeamScore.getValue() + "<br></html>";
+                        }
+                        else
+                            displayText+="</html>";
+                        greenDisplayPoints.setText(displayText);
+                    }
+                }
+        );
+
         yellowState = new JLabel();
         yellowState.setText("Purple Team Score:");
-        statePanel.add(yellowState);
+        c.gridy = 3;
+        c.gridx = 0;
+        statePanel.add(yellowState, c);
 
         yellowTeamScore = new JSpinner();
-        statePanel.add(yellowTeamScore);
+        c.gridx = 2;
+        statePanel.add(yellowTeamScore, c);
         yellowTeamScore.addChangeListener(
                 new ChangeListener() {
                     @Override
@@ -620,7 +750,8 @@ public class GraphicsInterface {
 
         yellowTeamPestilence = new JButton();
         yellowTeamPestilence.setText("Purple Team Pestilence");
-        statePanel.add(yellowTeamPestilence);
+        c.gridx = 3;
+        statePanel.add(yellowTeamPestilence, c);
         yellowTeamPestilence.addActionListener(
                 new ActionListener() {
                     @Override
@@ -635,6 +766,27 @@ public class GraphicsInterface {
                 }
         );
 
+        yellowTeamNameBox = new JComboBox(teams.getTeamName().toArray());
+        c.gridx = 4;
+        statePanel.add(yellowTeamNameBox, c);
+        yellowTeamNameBox.addActionListener(
+                new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        String displayText = "<html><b>Team Name:</b> &emsp &#160 " + teams.getTeamName(yellowTeamNameBox.getSelectedIndex())
+                                +"<br>School Name: &emsp " + teams.getSchoolName(yellowTeamNameBox.getSelectedIndex())
+                                +"<br>Robot Name: &emsp &#160 " + teams.getRobotName(yellowTeamNameBox.getSelectedIndex())
+                                +"<br>Robot Weight: &emsp " + teams.getRobotWeight(yellowTeamNameBox.getSelectedIndex());
+                        if (!pointsCheckBox.isSelected()){
+                            displayText+= "<br>Points: &emsp &emsp &emsp &emsp " + yellowTeamScore.getValue() + "<br></html>";
+                        }
+                        else
+                            displayText+="</html>";
+                        yellowDisplayPoints.setText(displayText);
+                    }
+                }
+        );
+
         console = new JTextArea();
         JScrollPane scrollPane = new JScrollPane(console,
                 JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
@@ -642,10 +794,12 @@ public class GraphicsInterface {
         console.setEditable(false);
         console.setForeground(new Color(230, 41, 0));
         c.fill = GridBagConstraints.BOTH;
+        c.gridwidth = GridBagConstraints.HORIZONTAL;
         c.anchor = GridBagConstraints.PAGE_END;
         c.weighty = 1;
         //c.gridheight = 40;
         c.gridy = 3;
+        c.gridx = 0;
         mainFrame.add(scrollPane, c);
 
         //statusLabel.setSize(350,100);
@@ -655,8 +809,30 @@ public class GraphicsInterface {
             }
         });
 
+        /*bracketPanel = new JPanel();
+        bracketPanel.setLayout(new GridLayout(2, 2));
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridwidth = 200;
+        //c.insets = new Insets(20,0,0,0);
+        c.gridx = 1;
+        c.ipadx = 200;
+        mainFrame.add(bracketPanel, c);
+
+        teamPanel = new JPanel();
+        teamPanel.setLayout(new GridLayout(0, 16));
+        bracketPanel.add(teamPanel);
+
+        bracketPanel.add(teamPanel);
+        textField1 = new JTextField("Team Name");
+        teamPanel.add(textField1);*/
+
+
         mainFrame.setVisible(true);
-        fieldPanel();
+        try {
+            fieldPanel();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
 
         /*
@@ -695,28 +871,31 @@ public class GraphicsInterface {
         //setVisible(true);
     }
 
-    private void fieldPanel(){
+    private void fieldPanel() throws IOException {
         scoreFrame = new JFrame("Field Control");
         scoreFrame.setSize(960,640);
-        scoreFrame.setLayout(new GridBagLayout());
+        JPanelWithBackground picturePanelWithBackground = new JPanelWithBackground(System.getProperty("user.dir") + "/src/n-sumowomen-a-20180501_v3.png");
+        scoreFrame.getContentPane().add(picturePanelWithBackground);
+        picturePanelWithBackground.setLayout(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
 
         topPanel = new JPanel();
+        topPanel.setOpaque(false);
         topPanel.setLayout(new GridBagLayout());
-        c.fill = GridBagConstraints.BOTH;
+        c.fill = GridBagConstraints.HORIZONTAL;
         //c.anchor = GridBagConstraints.PAGE_START;
         c.weighty = 1;
         c.weightx = 1;
         c.gridheight = 3;
         c.gridy = 0;
-        scoreFrame.add(topPanel, c);
+        picturePanelWithBackground.add(topPanel, c);
 
-        c = new GridBagConstraints();
         timeDisplay = new JLabel("00:00:000", SwingConstants.CENTER);
-        timeDisplay.setFont(new Font("Monospace", Font.BOLD, 100));
+        timeDisplay.setOpaque(false);
+        timeDisplay.setFont(new Font("Papyrus", Font.BOLD, 100));
         timeDisplay.setForeground(Color.BLACK);
         c.fill = GridBagConstraints.HORIZONTAL;
-        c.anchor = GridBagConstraints.CENTER;
+        c.anchor = GridBagConstraints.PAGE_START;
         c.gridwidth=2;
         c.weightx = 1;
         c.weighty = 0;
@@ -724,15 +903,16 @@ public class GraphicsInterface {
 
         c = new GridBagConstraints();
         bottomPanel = new JPanel();
+        bottomPanel.setOpaque(false);
         bottomPanel.setLayout(new GridLayout(0, 4));
         c.fill = GridBagConstraints.BOTH;
-        c.anchor = GridBagConstraints.PAGE_END;
+        c.anchor = GridBagConstraints.LAST_LINE_START;
         c.gridheight = 1;
         c.gridwidth = 40;
-        c.weighty = .25;
+        c.weighty = 0.1;
         c.weightx = 0;
         c.gridy = 3;
-        scoreFrame.add(bottomPanel, c);
+        picturePanelWithBackground.add(bottomPanel, c);
 
         scoreFrame.setVisible(true);
 
