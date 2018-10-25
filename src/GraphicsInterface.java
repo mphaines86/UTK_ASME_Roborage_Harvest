@@ -557,9 +557,13 @@ public class GraphicsInterface {
                     @Override
                     public void stateChanged(ChangeEvent e) {
                         //if(!matchStarted){
-                            redDisplayPoints.setText("<html>Red Team Points:<br>" + redTeamScore.getValue() + "<br></html>");
-                            messageWriter.writeMessage(new TeamMessage(TeamMessage.Teams.Red_TEAM, 1, ((Integer) redTeamScore.getValue()).byteValue(),
-                                    0, 0, 0, 0, 0, 0x04));
+                        String previousText = redDisplayPoints.getText();
+                        System.out.println(previousText);
+                        previousText = previousText.substring(0, previousText.lastIndexOf(":"));
+                        System.out.println(previousText);
+                        redDisplayPoints.setText(previousText + ": &emsp &emsp &emsp &emsp " + redTeamScore.getValue() + "<br></html>");
+                        messageWriter.writeMessage(new TeamMessage(TeamMessage.Teams.Red_TEAM, 1, ((Integer) redTeamScore.getValue()).byteValue(),
+                                0, 0, 0, 0, 0, 0x04));
                         //}
                     }
                 }
@@ -618,9 +622,13 @@ public class GraphicsInterface {
                     @Override
                     public void stateChanged(ChangeEvent e) {
                         //if(!matchStarted){
-                            blueDisplayPoints.setText("<html>Blue Team Points:<br>" + blueTeamScore.getValue() + "<br></html>");
-                            messageWriter.writeMessage(new TeamMessage(TeamMessage.Teams.BLUE_TEAM, 1, ((Integer) blueTeamScore.getValue()).byteValue(),
-                                    0, 0, 0, 0, 0, 0x04));
+                        String previousText = blueDisplayPoints.getText();
+                        System.out.println(previousText);
+                        previousText = previousText.substring(0, previousText.lastIndexOf(":"));
+                        System.out.println(previousText);
+                        blueDisplayPoints.setText(previousText + ": &emsp &emsp &emsp &emsp " + blueTeamScore.getValue() + "<br></html>");
+                        messageWriter.writeMessage(new TeamMessage(TeamMessage.Teams.BLUE_TEAM, 1, ((Integer) blueTeamScore.getValue()).byteValue(),
+                                0, 0, 0, 0, 0, 0x04));
                         //}
                     }
                 }
@@ -679,9 +687,13 @@ public class GraphicsInterface {
                     @Override
                     public void stateChanged(ChangeEvent e) {
                         //if(!matchStarted){
-                            greenDisplayPoints.setText("<html>Green Team Points:<br>" + greenTeamScore.getValue() + "<br></html>");
-                            messageWriter.writeMessage(new TeamMessage(TeamMessage.Teams.GREEN_TEAM, 1, ((Integer) greenTeamScore.getValue()).byteValue(),
-                                    0, 0, 0, 0, 0, 0x04));
+                        String previousText = greenDisplayPoints.getText();
+                        System.out.println(previousText);
+                        previousText = previousText.substring(0, previousText.lastIndexOf(":"));
+                        System.out.println(previousText);
+                        greenDisplayPoints.setText(previousText + ": &emsp &emsp &emsp &emsp " + greenTeamScore.getValue() + "<br></html>");
+                        messageWriter.writeMessage(new TeamMessage(TeamMessage.Teams.GREEN_TEAM, 1, ((Integer) greenTeamScore.getValue()).byteValue(),
+                                0, 0, 0, 0, 0, 0x04));
                         //}
                     }
                 }
@@ -740,9 +752,13 @@ public class GraphicsInterface {
                     @Override
                     public void stateChanged(ChangeEvent e) {
                         //if(!matchStarted){
-                            yellowDisplayPoints.setText("<html>Purple Team Points:<br>" + yellowTeamScore.getValue() + "<br></html>");
-                            messageWriter.writeMessage(new TeamMessage(TeamMessage.Teams.YELLOW_TEAM, 1, ((Integer) yellowTeamScore.getValue()).byteValue(),
-                                    0, 0, 0, 0, 0, 0x04));
+                        String previousText = yellowDisplayPoints.getText();
+                        System.out.println(previousText);
+                        previousText = previousText.substring(0, previousText.lastIndexOf(":"));
+                        System.out.println(previousText);
+                        yellowDisplayPoints.setText(previousText + ": &emsp &emsp &emsp &emsp " + yellowTeamScore.getValue() + "<br></html>");
+                        messageWriter.writeMessage(new TeamMessage(TeamMessage.Teams.YELLOW_TEAM, 1, ((Integer) yellowTeamScore.getValue()).byteValue(),
+                                0, 0, 0, 0, 0, 0x04));
                         //}
                     }
                 }
